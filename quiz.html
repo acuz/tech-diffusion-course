@@ -445,13 +445,8 @@
             if (dataChanged) {
                 console.log('💾 Saving cleaned data to Firebase...');
                 appData.lastUpdate = Date.now();
-                database.ref('appData').set(appData)
-                    .then(() => {
-                        console.log('✅ Corrupted data cleaned and saved successfully');
-                    })
-                    .catch((error) => {
-                        console.error('❌ Error saving cleaned data:', error);
-                    });
+                saveToFirebase();
+                console.log('✅ Corrupted data cleaned (merge save)');
             } else {
                 console.log('✅ No corrupted data found');
             }
@@ -562,19 +557,29 @@
 
         function saveToFirebase() {
             appData.lastUpdate = Date.now();
-            
+
             // Validate data before saving
             Object.keys(appData.pools).forEach(poolId => {
                 ensurePoolStructure(poolId);
             });
-            
-            database.ref('appData').set(appData)
-                .then(() => {
-                    console.log('💾 Data saved to Firebase');
-                })
-                .catch((error) => {
-                    console.error('❌ Error saving to Firebase:', error);
-                });
+
+            // Path-scoped MERGE write — never overwrite the whole appData, so a stale
+            // browser tab can no longer delete pools or users it doesn't know about.
+            const updates = { 'lastUpdate': appData.lastUpdate };
+            Object.keys(appData.pools).forEach(poolId => { updates['pools/' + poolId] = appData.pools[poolId]; });
+            Object.keys(appData.users).forEach(username => { updates['users/' + username] = appData.users[username]; });
+            database.ref('appData').update(updates)
+                .then(() => { console.log('💾 Data saved (merge)'); })
+                .catch((error) => { console.error('❌ Error saving to Firebase:', error); });
+        }
+
+        // Targeted write of ONE participant's votes — avoids clobbering other students'
+        // votes in the same pool during live voting.
+        function saveUserVote(poolId, username) {
+            if (!appData.pools[poolId] || !appData.pools[poolId].userVotes) return;
+            database.ref('appData/pools/' + poolId + '/userVotes/' + username)
+                .set(appData.pools[poolId].userVotes[username])
+                .catch((error) => { console.error('❌ Error saving vote:', error); });
         }
 
         // Connection status
@@ -683,7 +688,7 @@
                     currentlyCorrect: false,
                     penalties: 0
                 };
-                saveToFirebase();
+                saveUserVote(currentPool, currentUser);
             }
         }
 
@@ -968,7 +973,7 @@
             }
 
             updateUserCorrectness();
-            saveToFirebase();
+            saveUserVote(currentPool, currentUser);
             updateUserInterface();
         }
 
@@ -1483,7 +1488,11 @@
             if (appData.pools[poolId] && appData.pools[poolId].userVotes) {
                 delete appData.pools[poolId].userVotes[username];
             }
-            
+
+            // merge-save can't delete a top-level user; remove it explicitly if gone
+            if (!appData.users[username]) {
+                database.ref('appData/users/' + username).remove();
+            }
             saveToFirebase();
             updateAdminInterface();
         }
@@ -1575,8 +1584,8 @@
             
             // Restore original pool
             currentPool = originalPool;
-            
-            saveToFirebase();
+
+            saveUserVote(poolId, currentUser);
             updateUserInterface();
         }
 
@@ -1758,12 +1767,14 @@
                             // Remove user if they have no pools left
                             if (appData.users[username].pools.length === 0) {
                                 delete appData.users[username];
+                                database.ref('appData/users/' + username).remove();
                             }
                         });
                     }
-                    
+
                     // Remove the pool itself
                     delete appData.pools[poolId];
+                    database.ref('appData/pools/' + poolId).remove();
                     
                     // If this was the currently selected pool, deselect it
                     if (currentPool == poolId) {
