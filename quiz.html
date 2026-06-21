@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Polling Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase v8 -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#5D5CDE',
+                        'primary-dark': '#4A49C7'
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
+    <div id="app" class="min-h-screen">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="flex items-center justify-center min-h-screen px-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+                <h1 class="text-3xl font-bold text-center mb-8 text-primary">Smart Polling</h1>
+                <div class="space-y-6">
+                    <div>
+                        <label for="username" class="block text-sm font-medium mb-2">Username</label>
+                        <input type="text" id="username" placeholder="Enter your username" 
+                               class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 transition-colors duration-200">
+                    </div>
+                    <div id="userPoolField">
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Enter your assigned username to access your pools</p>
+                    </div>
+                    <div id="adminPasswordField" class="hidden">
+                        <label for="adminPassword" class="block text-sm font-medium mb-2">Admin Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter admin password" 
+                               class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 transition-colors duration-200">
+                    </div>
+                    <div class="space-y-3">
+                        <button onclick="loginAsUser()" 
+                                class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Join as Participant
+                        </button>
+                        <button onclick="showAdminLogin()" id="adminLoginBtn"
+                                class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Login as Admin
+                        </button>
+                        <button onclick="loginAsAdmin()" id="adminSubmitBtn" class="hidden w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                            Submit Admin Login
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="hidden p-4 max-w-6xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h1 id="adminPanelTitle" class="text-3xl font-bold text-primary">Admin Panel</h1>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    Logout
+                </button>
+            </div>
+
+            <!-- Emergency Data Reset -->
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                <h2 class="text-lg font-semibold text-red-700 dark:text-red-400 mb-2">🚨 Emergency Data Management</h2>
+                <p class="text-sm text-red-600 dark:text-red-300 mb-3">If you're experiencing data corruption errors, use this to reset all data:</p>
+                <button onclick="resetCorruptedData()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold">
+                    🔄 Reset All Data (Use if experiencing errors)
+                </button>
+            </div>
+
+            <!-- User Management -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">User Management</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Create User -->
+                    <div>
+                        <h3 class="font-semibold mb-3">Create New User</h3>
+                        <div class="space-y-3">
+                            <input type="text" id="newUsername" placeholder="Username" 
+                                   class="w-full px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                            <div class="flex gap-2">
+                                <select id="assignPoolSelect" class="flex-1 px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+                                    <option value="">-- Select Pool --</option>
+                                </select>
+                                <button onclick="createUser()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Create User</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Users List -->
+                    <div>
+                        <h3 class="font-semibold mb-3">Existing Users</h3>
+                        <div id="usersList" class="max-h-64 overflow-y-auto">
+                            <p class="text-gray-500">No users created yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pool Management -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Pool Management</h2>
+                <div class="flex gap-4 items-center mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Select Pool to Manage</label>
+                        <select id="poolSelect" onchange="selectPool()" class="px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                            <option value="">-- Select a Pool --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Or Create New Pool</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="newPoolNumber" placeholder="Pool #" min="1" step="1" class="px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                            <button onclick="createNewPool()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">Create</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="poolOverview" class="mt-4">
+                    <!-- Pool overview will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Question Creation -->
+            <div id="questionCreationSection" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Create Question</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Question</label>
+                        <input type="text" id="questionText" placeholder="Enter your question" 
+                               class="w-full px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Option 1</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="option1" placeholder="Option 1" 
+                                       class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                                <input type="checkbox" id="correct1" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Option 2</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="option2" placeholder="Option 2" 
+                                       class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                                <input type="checkbox" id="correct2" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Option 3</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="option3" placeholder="Option 3" 
+                                       class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                                <input type="checkbox" id="correct3" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Option 4</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="option4" placeholder="Option 4" 
+                                       class="flex-1 px-4 py-3 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700">
+                                <input type="checkbox" id="correct4" class="w-5 h-5 text-primary rounded focus:ring-primary">
+                            </div>
+                        </div>
+                    </div>
+                    <button onclick="createQuestion()" 
+                            class="bg-primary hover:bg-primary-dark text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">
+                        Create Question
+                    </button>
+                </div>
+            </div>
+
+            <!-- Poll Controls -->
+            <div id="pollControlsSection" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Poll Controls</h2>
+                <div class="flex gap-4 items-center flex-wrap">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg font-medium">Pool Status:</span>
+                        <span id="pollStatus" class="text-lg font-medium">-</span>
+                    </div>
+                    <button id="pollToggle" onclick="togglePoll()" 
+                            class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+                        Start Poll
+                    </button>
+                    <button onclick="clearQuestions()" 
+                            class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200">
+                        Clear All Questions
+                    </button>
+                </div>
+                <div class="mt-3 text-gray-600 dark:text-gray-400 text-sm italic">
+                    ⚠️ Important: You must start the poll before users can answer questions. Control individual questions using Open/Close buttons below.
+                </div>
+            </div>
+
+            <!-- Current Questions -->
+            <div id="questionsSection" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Question Management</h2>
+                <div id="questionsList" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400">No questions created yet.</p>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div id="resultsSection" class="hidden bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold mb-4">Results & Leaderboard</h2>
+                <div id="resultsList" class="space-y-4">
+                    <p class="text-gray-500 dark:text-gray-400">No results yet.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Voting Interface -->
+        <div id="userPanel" class="hidden p-4 max-w-4xl mx-auto">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-primary">Smart Polling</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Welcome, <span id="userDisplayName" class="font-semibold"></span></p>
+                </div>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200">
+                    Logout
+                </button>
+            </div>
+
+            <!-- Pool Selection and Controls -->
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+                <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+                    <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center flex-1">
+                        <div>
+                            <label class="block text-sm font-medium mb-2">Select Active Pools</label>
+                            <select id="userPoolSelect" multiple class="px-4 py-2 text-base border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white dark:bg-gray-700 min-w-[200px]" onchange="updateActiveUserPools()">
+                                <!-- Options will be populated by JavaScript -->
+                            </select>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Hold Ctrl/Cmd to select multiple pools</p>
+                        </div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">
+                            <div>📊 <span id="activePoolsCount">0</span> active pool(s)</div>
+                            <div>📝 <span id="availableQuestionsCount">0</span> total question(s)</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="refreshUserData()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                            Refresh
+                        </button>
+                        <button onclick="selectAllUserPools()" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-sm">
+                            Select All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Poll Status -->
+            <div id="pollStatusUser" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+                <p class="text-red-700 dark:text-red-400 font-medium">Poll is currently closed. Please wait for the admin to start the poll.</p>
+            </div>
+
+            <!-- Questions for Voting -->
+            <div id="votingQuestions" class="space-y-6">
+                <!-- Questions will be populated here -->
+            </div>
+        </div>
+
+        <!-- User Answers Modal -->
+        <div id="userAnswersModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+                <div class="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
+                    <h2 class="text-xl font-semibold" id="modalUserName">User Answers</h2>
+                    <button onclick="closeUserAnswersModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+                    <div id="userAnswersContent">
+                        <!-- User answers will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-md w-full">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-red-100 dark:bg-red-900/30 rounded-full p-2 mr-3">
+                            <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white" id="confirmationTitle">Confirm Action</h3>
+                    </div>
+                    <div class="mb-6">
+                        <p class="text-gray-600 dark:text-gray-300" id="confirmationMessage">Are you sure you want to proceed?</p>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button onclick="closeConfirmationModal()" class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <button id="confirmButton" onclick="confirmAction()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="fixed bottom-4 right-4 px-3 py-2 rounded-lg text-sm">
+            <span id="statusText">🟡 Connecting...</span>
+        </div>
+    </div>
+
+    <script>
+        // 🔥 FIREBASE CONFIG - READY TO USE
+        const firebaseConfig = {
+            apiKey: "AIzaSyBzYBncDXuDAZHFGLF5YBinB_ftaz7I0qI",
+            authDomain: "technology-diffusion-models.firebaseapp.com",
+            databaseURL: "https://technology-diffusion-models-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "technology-diffusion-models",
+            storageBucket: "technology-diffusion-models.firebasestorage.app",
+            messagingSenderId: "724453899347",
+            appId: "1:724453899347:web:314aa1b0787d5b3b62daa6",
+            measurementId: "G-BPHP8QQNCK"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Global state
+        let appData = { pools: {}, users: {} };
+        let currentPool = null;
+        let currentUser = null;
+        let isAdmin = false;
+        let userPools = []; // Pools the current user has access to
+
+        // Dark mode setup
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
+        // Data cleanup and validation
+        function cleanupCorruptedData() {
+            console.log('🧹 Cleaning up corrupted data...');
+            let dataChanged = false;
+            
+            // Clean up pools
+            if (appData.pools) {
+                Object.keys(appData.pools).forEach(poolId => {
+                    const pool = appData.pools[poolId];
+                    if (pool && pool.questions) {
+                        const originalLength = pool.questions.length;
+                        
+                        // Remove questions with invalid structure - more aggressive filtering
+                        pool.questions = pool.questions.filter(q => {
+                            // Check if question is valid object
+                            if (!q || typeof q !== 'object') {
+                                console.log('🗑️ Removing non-object question:', q);
+                                return false;
+                            }
+                            
+                            // Check for valid ID (number only, not timestamp strings)
+                            if (typeof q.id === 'undefined' || q.id === null || typeof q.id !== 'number') {
+                                console.log('🗑️ Removing question with invalid ID:', q.id);
+                                return false;
+                            }
+                            
+                            // Check for valid text
+                            if (!q.text || typeof q.text !== 'string' || q.text.trim() === '') {
+                                console.log('🗑️ Removing question with invalid text:', q.text);
+                                return false;
+                            }
+                            
+                            // Check for valid options array
+                            if (!Array.isArray(q.options) || q.options.length === 0) {
+                                console.log('🗑️ Removing question with invalid options:', q.options);
+                                return false;
+                            }
+                            
+                            // Check for valid correctAnswers array
+                            if (!Array.isArray(q.correctAnswers) || q.correctAnswers.length === 0) {
+                                console.log('🗑️ Removing question with invalid correctAnswers:', q.correctAnswers);
+                                return false;
+                            }
+                            
+                            return true;
+                        });
+                        
+                        if (pool.questions.length !== originalLength) {
+                            console.log(`🧹 Cleaned ${originalLength - pool.questions.length} corrupted questions from pool ${poolId}`);
+                            dataChanged = true;
+                        }
+                        
+                        // Clean up user votes - remove votes for non-existent questions
+                        if (pool.userVotes) {
+                            Object.keys(pool.userVotes).forEach(username => {
+                                const userData = pool.userVotes[username];
+                                if (userData && userData.votes) {
+                                    const validQuestionIds = pool.questions.map(q => q.id);
+                                    const originalVotesCount = Object.keys(userData.votes).length;
+                                    const newVotes = {};
+                                    
+                                    Object.keys(userData.votes).forEach(questionId => {
+                                        // Convert questionId to number for comparison
+                                        const numQuestionId = parseInt(questionId);
+                                        if (!isNaN(numQuestionId) && validQuestionIds.includes(numQuestionId)) {
+                                            newVotes[questionId] = userData.votes[questionId];
+                                        } else {
+                                            console.log(`🗑️ Removing orphaned vote for question ${questionId} from user ${username}`);
+                                        }
+                                    });
+                                    
+                                    if (Object.keys(newVotes).length !== originalVotesCount) {
+                                        userData.votes = newVotes;
+                                        dataChanged = true;
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            
+            // Save cleaned data back to Firebase if changes were made
+            if (dataChanged) {
+                console.log('💾 Saving cleaned data to Firebase...');
+                appData.lastUpdate = Date.now();
+                database.ref('appData').set(appData)
+                    .then(() => {
+                        console.log('✅ Corrupted data cleaned and saved successfully');
+                    })
+                    .catch((error) => {
+                        console.error('❌ Error saving cleaned data:', error);
+                    });
+            } else {
+                console.log('✅ No corrupted data found');
+            }
+        }
+
+        // Emergency data reset function (can be called from console if needed)
+        window.resetCorruptedData = function() {
+            console.log('🔄 Emergency data reset initiated...');
+            // Reset to clean structure
+            appData = {
+                pools: {},
+                users: {},
+                lastUpdate: Date.now()
+            };
+            database.ref('appData').set(appData)
+                .then(() => {
+                    console.log('✅ Data reset complete');
+                    updateAllInterfaces();
+                })
+                .catch((error) => {
+                    console.error('❌ Error resetting data:', error);
+                });
+        };
+
+        // Ensure pool structure is always correct
+        function ensurePoolStructure(poolId) {
+            if (!appData.pools) {
+                appData.pools = {};
+            }
+            if (!appData.pools[poolId]) {
+                appData.pools[poolId] = {
+                    id: parseInt(poolId),
+                    questions: [],
+                    pollOpen: false,
+                    userVotes: {},
+                    pollStartTime: null,
+                    created: Date.now()
+                };
+            }
+            // Ensure questions is an array
+            if (!Array.isArray(appData.pools[poolId].questions)) {
+                appData.pools[poolId].questions = [];
+            }
+            // Ensure userVotes is an object
+            if (!appData.pools[poolId].userVotes || typeof appData.pools[poolId].userVotes !== 'object') {
+                appData.pools[poolId].userVotes = {};
+            }
+            return appData.pools[poolId];
+        }
+
+        function getCurrentPoolData() {
+            if (!currentPool) return null;
+            return ensurePoolStructure(currentPool);
+        }
+
+        // Firebase functions
+        function setupFirebaseListeners() {
+            database.ref('appData').on('value', (snapshot) => {
+                try {
+                    const data = snapshot.val();
+                    console.log('📡 Firebase data received:', data);
+                    
+                    if (data && typeof data === 'object') {
+                        // Fix corrupted data structure immediately
+                        if (Array.isArray(data.pools)) {
+                            console.log('🔄 Converting pools array to object...');
+                            data.pools = {};
+                        }
+                        
+                        appData = data;
+                        if (!appData.pools || typeof appData.pools !== 'object' || Array.isArray(appData.pools)) {
+                            appData.pools = {};
+                        }
+                        if (!appData.users || typeof appData.users !== 'object') {
+                            appData.users = {};
+                        }
+                        
+                        // Fix any broken pool structures
+                        Object.keys(appData.pools).forEach(poolId => {
+                            ensurePoolStructure(poolId);
+                        });
+                        
+                        // Clean up corrupted data
+                        cleanupCorruptedData();
+                    } else {
+                        appData = { pools: {}, users: {} };
+                    }
+                    
+                    updateAllInterfaces();
+                    updateConnectionStatus('connected');
+                } catch (error) {
+                    console.error('Error processing Firebase data:', error);
+                    // Force safe state on error
+                    appData = { pools: {}, users: {} };
+                    updateAllInterfaces();
+                    updateConnectionStatus('error');
+                }
+            });
+
+            database.ref('.info/connected').on('value', (snapshot) => {
+                if (snapshot.val() === true) {
+                    updateConnectionStatus('connected');
+                } else {
+                    updateConnectionStatus('disconnected');
+                }
+            });
+        }
+
+        function saveToFirebase() {
+            appData.lastUpdate = Date.now();
+            
+            // Validate data before saving
+            Object.keys(appData.pools).forEach(poolId => {
+                ensurePoolStructure(poolId);
+            });
+            
+            database.ref('appData').set(appData)
+                .then(() => {
+                    console.log('💾 Data saved to Firebase');
+                })
+                .catch((error) => {
+                    console.error('❌ Error saving to Firebase:', error);
+                });
+        }
+
+        // Connection status
+        function updateConnectionStatus(status) {
+            const statusEl = document.getElementById('statusText');
+            const statusContainer = document.getElementById('connectionStatus');
+            
+            if (status === 'connected') {
+                statusEl.textContent = '🟢 Connected';
+                statusContainer.className = 'fixed bottom-4 right-4 px-3 py-2 rounded-lg text-sm bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400';
+            } else {
+                statusEl.textContent = '🔴 Disconnected';
+                statusContainer.className = 'fixed bottom-4 right-4 px-3 py-2 rounded-lg text-sm bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
+            }
+        }
+
+        // Login functions
+        function showAdminLogin() {
+            document.getElementById('adminPasswordField').classList.remove('hidden');
+            document.getElementById('userPoolField').classList.add('hidden');
+            document.getElementById('adminLoginBtn').classList.add('hidden');
+            document.getElementById('adminSubmitBtn').classList.remove('hidden');
+        }
+
+        function loginAsAdmin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username !== 'Angelo' || password !== '4584') {
+                console.log('Invalid admin credentials');
+                return;
+            }
+            
+            currentUser = username;
+            isAdmin = true;
+            showAdminPanel();
+        }
+
+        function loginAsUser() {
+            const username = document.getElementById('username').value.trim();
+            
+            if (!username) {
+                console.log('Please enter a username');
+                return;
+            }
+            
+            // Check if user exists and get their assigned pools
+            if (!appData.users || !appData.users[username]) {
+                console.log('Username not found. Please contact admin to create your account.');
+                return;
+            }
+            
+            currentUser = username;
+            userPools = appData.users[username].pools || [];
+            isAdmin = false;
+            
+            // Initialize user in all their assigned pools
+            userPools.forEach(poolId => {
+                currentPool = poolId;
+                initializeUser();
+            });
+            
+            showUserPanel();
+        }
+
+        function logout() {
+            currentUser = null;
+            currentPool = null;
+            isAdmin = false;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('userPanel').classList.add('hidden');
+            document.getElementById('username').value = '';
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminPasswordField').classList.add('hidden');
+            document.getElementById('userPoolField').classList.remove('hidden');
+            document.getElementById('adminLoginBtn').classList.remove('hidden');
+            document.getElementById('adminSubmitBtn').classList.add('hidden');
+            updateUserPoolSelector();
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('userPanel').classList.add('hidden');
+            document.getElementById('adminPanel').classList.remove('hidden');
+            updateAdminInterface();
+        }
+
+        function showUserPanel() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('userPanel').classList.remove('hidden');
+            document.getElementById('userDisplayName').textContent = currentUser;
+            updateUserInterface();
+        }
+
+        function initializeUser() {
+            const poolData = getCurrentPoolData();
+            if (!poolData) return;
+            
+            if (!poolData.userVotes[currentUser]) {
+                poolData.userVotes[currentUser] = {
+                    votes: {},
+                    correctTime: 0,
+                    lastCorrectTime: null,
+                    currentlyCorrect: false,
+                    penalties: 0
+                };
+                saveToFirebase();
+            }
+        }
+
+        // Pool management
+        function createNewPool() {
+            const poolNumber = parseInt(document.getElementById('newPoolNumber').value);
+            if (!poolNumber || poolNumber < 1) {
+                console.log('Please enter a valid pool number');
+                return;
+            }
+            
+            if (appData.pools[poolNumber]) {
+                console.log(`Pool ${poolNumber} already exists`);
+                return;
+            }
+            
+            ensurePoolStructure(poolNumber);
+            currentPool = poolNumber;
+            document.getElementById('newPoolNumber').value = '';
+            updatePoolSelect();
+            document.getElementById('poolSelect').value = poolNumber;
+            saveToFirebase();
+        }
+
+        function selectPool() {
+            const selectedPool = parseInt(document.getElementById('poolSelect').value);
+            if (selectedPool) {
+                currentPool = selectedPool;
+                updateAdminInterface();
+            } else {
+                currentPool = null;
+                hidePoolSpecificSections();
+            }
+        }
+
+        function updatePoolSelect() {
+            const poolSelect = document.getElementById('poolSelect');
+            const currentValue = poolSelect.value;
+            
+            poolSelect.innerHTML = '<option value="">-- Select a Pool --</option>';
+            
+            const sortedPoolIds = Array.from(Object.keys(appData.pools)).sort((a, b) => parseInt(a) - parseInt(b));
+            
+            sortedPoolIds.forEach(poolId => {
+                const option = document.createElement('option');
+                option.value = poolId;
+                option.textContent = `Pool ${poolId}`;
+                poolSelect.appendChild(option);
+            });
+            
+            if (currentValue && appData.pools[currentValue]) {
+                poolSelect.value = currentValue;
+            }
+        }
+
+        function hidePoolSpecificSections() {
+            document.getElementById('questionCreationSection').classList.add('hidden');
+            document.getElementById('pollControlsSection').classList.add('hidden');
+            document.getElementById('questionsSection').classList.add('hidden');
+            document.getElementById('resultsSection').classList.add('hidden');
+        }
+
+        function showPoolSpecificSections() {
+            document.getElementById('questionCreationSection').classList.remove('hidden');
+            document.getElementById('pollControlsSection').classList.remove('hidden');
+            document.getElementById('questionsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').classList.remove('hidden');
+        }
+
+        function updatePoolOverview() {
+            const poolOverview = document.getElementById('poolOverview');
+            
+            if (Object.keys(appData.pools).length === 0) {
+                poolOverview.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No pools created yet.</p>';
+                return;
+            }
+            
+            const sortedPoolIds = Array.from(Object.keys(appData.pools)).sort((a, b) => parseInt(a) - parseInt(b));
+            
+            poolOverview.innerHTML = `
+                <h3 class="font-semibold mb-3">All Pools Overview</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    ${sortedPoolIds.map(poolId => {
+                        const poolData = appData.pools[poolId];
+                        const participantCount = Object.keys(poolData.userVotes || {}).length;
+                        const questionCount = (poolData.questions || []).length;
+                        const openQuestionCount = (poolData.questions || []).filter(q => q.isOpen).length;
+                        
+                        return `
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 ${currentPool == poolId ? 'border-primary bg-primary/5' : ''}">
+                                <div class="flex justify-between items-center mb-2">
+                                    <h4 class="font-semibold">Pool ${poolId}</h4>
+                                    <span class="px-2 py-1 rounded text-xs ${poolData.pollOpen ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}">
+                                        ${poolData.pollOpen ? 'Poll Open' : 'Poll Closed'}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                                    <div>👥 ${participantCount} participant(s)</div>
+                                    <div>📝 ${questionCount} question(s)</div>
+                                    <div>✅ ${openQuestionCount} open question(s)</div>
+                                </div>
+                                <div class="mt-3 flex gap-2">
+                                    <button onclick="selectPoolById(${poolId})" class="flex-1 bg-primary hover:bg-primary-dark text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+                                        Manage Pool
+                                    </button>
+                                    <button onclick="deletePool(${poolId})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm transition-colors duration-200">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        function selectPoolById(poolId) {
+            currentPool = poolId;
+            document.getElementById('poolSelect').value = poolId;
+            updateAdminInterface();
+        }
+
+        // Question management with manual options
+        function createQuestion() {
+            const questionText = document.getElementById('questionText').value.trim();
+            if (!questionText) {
+                console.log('Please enter a question');
+                return;
+            }
+
+            const options = [];
+            const correctAnswers = [];
+
+            for (let i = 1; i <= 4; i++) {
+                const optionText = document.getElementById(`option${i}`).value.trim();
+                const isCorrect = document.getElementById(`correct${i}`).checked;
+                
+                if (optionText) {
+                    options.push(optionText);
+                    if (isCorrect) {
+                        correctAnswers.push(i - 1); // 0-indexed
+                    }
+                }
+            }
+
+            if (options.length < 2) {
+                console.log('Please provide at least 2 options');
+                return;
+            }
+
+            if (correctAnswers.length === 0) {
+                console.log('Please select at least one correct answer');
+                return;
+            }
+
+            const question = {
+                id: Date.now(),
+                text: questionText,
+                options: options,
+                correctAnswers: correctAnswers,
+                createdAt: Date.now(),
+                isOpen: false
+            };
+
+            const poolData = getCurrentPoolData();
+            poolData.questions.push(question);
+            clearQuestionForm();
+            saveToFirebase();
+            updateAdminInterface();
+        }
+
+        function clearQuestionForm() {
+            document.getElementById('questionText').value = '';
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`option${i}`).value = '';
+                document.getElementById(`correct${i}`).checked = false;
+            }
+        }
+
+        function clearQuestions() {
+            showConfirmationModal(
+                'Clear All Questions',
+                'Are you sure you want to clear all questions? This will reset all user votes.',
+                'Clear Questions',
+                () => {
+                    const poolData = getCurrentPoolData();
+                    poolData.questions = [];
+                    poolData.userVotes = {};
+                    saveToFirebase();
+                    updateAdminInterface();
+                }
+            );
+        }
+
+        function togglePoll() {
+            const poolData = getCurrentPoolData();
+            poolData.pollOpen = !poolData.pollOpen;
+            
+            if (poolData.pollOpen) {
+                poolData.pollStartTime = Date.now();
+                // Reset all user correct times when poll starts
+                Object.values(poolData.userVotes).forEach(userData => {
+                    userData.correctTime = 0;
+                    userData.lastCorrectTime = null;
+                    userData.currentlyCorrect = false;
+                });
+            }
+            
+            saveToFirebase();
+            updateAdminInterface();
+        }
+
+        // Individual question control
+        function toggleQuestion(questionId) {
+            const poolData = getCurrentPoolData();
+            const question = poolData.questions.find(q => q.id === questionId);
+            if (!question) return;
+
+            question.isOpen = !question.isOpen;
+            
+            // If closing the question, calculate penalties for incorrect answers
+            if (!question.isOpen) {
+                calculatePenaltiesForQuestion(questionId);
+            }
+            
+            // Update correctness status for ALL users when question state changes
+            updateAllUsersCorrectnessInPool(currentPool);
+            
+            saveToFirebase();
+            updateAdminInterface();
+        }
+
+        function calculatePenaltiesForQuestion(questionId) {
+            const poolData = getCurrentPoolData();
+            const question = poolData.questions.find(q => q.id === questionId);
+            if (!question) return;
+
+            Object.values(poolData.userVotes).forEach(userData => {
+                if (!userData || !userData.votes) return; // Skip invalid user data
+                
+                // Initialize penalties if not exists
+                if (typeof userData.penalties === 'undefined') {
+                    userData.penalties = 0;
+                }
+                
+                const userAnswers = userData.votes[questionId] || [];
+                const correctAnswers = question.correctAnswers;
+                
+                // Check if user has exactly the correct answers
+                const hasCorrectAnswers = userAnswers.length === correctAnswers.length &&
+                    userAnswers.every(ans => correctAnswers.includes(ans)) &&
+                    correctAnswers.every(ans => userAnswers.includes(ans));
+                
+                // Apply penalty if wrong final answer
+                if (!hasCorrectAnswers && userAnswers.length > 0) {
+                    userData.penalties += 30000; // 30 seconds in milliseconds
+                }
+            });
+        }
+
+        // Voting functions with checkbox support
+        function vote(questionId, optionIndex) {
+            const poolData = getCurrentPoolData();
+            if (!poolData.pollOpen) return;
+
+            initializeUser();
+            const userData = poolData.userVotes[currentUser];
+            
+            if (!userData.votes[questionId]) {
+                userData.votes[questionId] = [];
+            }
+
+            const currentVotes = userData.votes[questionId];
+            const optionIndexNum = parseInt(optionIndex);
+            
+            if (currentVotes.includes(optionIndexNum)) {
+                // Remove vote
+                userData.votes[questionId] = currentVotes.filter(v => v !== optionIndexNum);
+            } else {
+                // Add vote
+                userData.votes[questionId] = [...currentVotes, optionIndexNum];
+            }
+
+            updateUserCorrectness();
+            saveToFirebase();
+            updateUserInterface();
+        }
+
+        function updateUserCorrectness() {
+            const poolData = getCurrentPoolData();
+            if (!poolData.pollOpen || poolData.questions.length === 0) return;
+
+            const userData = poolData.userVotes[currentUser];
+            const now = Date.now();
+            
+            let allCorrect = true;
+            
+            // Only check open questions for correct time counting
+            const openQuestions = poolData.questions.filter(q => q.isOpen);
+            
+            if (openQuestions.length === 0) {
+                // No open questions, stop counting time
+                if (userData.currentlyCorrect && userData.lastCorrectTime) {
+                    userData.correctTime += now - userData.lastCorrectTime;
+                }
+                userData.currentlyCorrect = false;
+                userData.lastCorrectTime = null;
+                return;
+            }
+            
+            for (const question of openQuestions) {
+                const userAnswers = userData.votes[question.id] || [];
+                const correctAnswers = question.correctAnswers;
+                
+                // User must have EXACTLY the correct answers (all correct, no wrong ones)
+                // Empty answers don't count as correct
+                const hasExactlyCorrectAnswers = userAnswers.length > 0 &&
+                    userAnswers.length === correctAnswers.length &&
+                    userAnswers.every(ans => correctAnswers.includes(ans)) &&
+                    correctAnswers.every(ans => userAnswers.includes(ans));
+                
+                if (!hasExactlyCorrectAnswers) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            // Update correct time tracking
+            if (allCorrect && !userData.currentlyCorrect) {
+                // User just became correct
+                userData.lastCorrectTime = now;
+                userData.currentlyCorrect = true;
+            } else if (!allCorrect && userData.currentlyCorrect) {
+                // User was correct but no longer is (wrong answer selected or question closed)
+                if (userData.lastCorrectTime) {
+                    userData.correctTime += now - userData.lastCorrectTime;
+                }
+                userData.currentlyCorrect = false;
+                userData.lastCorrectTime = null;
+            }
+        }
+
+        // Interface updates
+        function updateAdminInterface() {
+            // Check if we're on the admin panel
+            if (!isAdmin) return;
+            
+            updatePoolSelect();
+            updatePoolOverview();
+            
+            const adminPanelTitle = document.getElementById('adminPanelTitle');
+            if (!adminPanelTitle) return; // Exit if element doesn't exist
+            
+            if (!currentPool) {
+                adminPanelTitle.textContent = 'Admin Panel - All Pools';
+                hidePoolSpecificSections();
+                return;
+            }
+            
+            const poolData = getCurrentPoolData();
+            if (!poolData) return;
+            
+            showPoolSpecificSections();
+            adminPanelTitle.textContent = `Admin Panel - Pool ${currentPool}`;
+            
+            // Update poll status and toggle button
+            const pollToggle = document.getElementById('pollToggle');
+            const pollStatus = document.getElementById('pollStatus');
+            
+            if (poolData.pollOpen) {
+                pollToggle.textContent = 'Close Poll';
+                pollToggle.className = 'bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200';
+                pollStatus.textContent = 'Poll Open';
+                pollStatus.className = 'text-lg font-medium text-green-500';
+            } else {
+                pollToggle.textContent = 'Start Poll';
+                pollToggle.className = 'bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200';
+                pollStatus.textContent = 'Poll Closed';
+                pollStatus.className = 'text-lg font-medium text-red-500';
+            }
+            
+            // Update questions list
+            const questionsList = document.getElementById('questionsList');
+            if (poolData.questions.length === 0) {
+                questionsList.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No questions created yet.</p>';
+            } else {
+                questionsList.innerHTML = poolData.questions.map(q => `
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="font-semibold flex-1">${q.text}</h3>
+                            <div class="flex gap-2 ml-4">
+                                <button onclick="toggleQuestion(${q.id})" 
+                                        class="${q.isOpen ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white px-3 py-1 rounded text-sm transition-colors duration-200"
+                                        ${!poolData.pollOpen ? 'disabled title="Start poll first"' : ''}>
+                                    ${q.isOpen ? 'Close' : 'Open'}
+                                </button>
+                                <span class="px-3 py-1 rounded text-sm ${q.isOpen ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}">
+                                    ${q.isOpen ? 'Open' : 'Closed'}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                            ${q.options.map((option, index) => `
+                                <div class="flex items-center gap-2">
+                                    <span class="${q.correctAnswers.includes(index) ? 'text-green-500 font-semibold' : ''}">${option}</span>
+                                    ${q.correctAnswers.includes(index) ? '<span class="text-green-500">✓</span>' : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                        ${!poolData.pollOpen ? '<div class="mt-2 text-xs text-orange-500">⚠️ Start the poll to open questions</div>' : ''}
+                    </div>
+                `).join('');
+            }
+
+            updateResults();
+        }
+
+        function updateUserInterface() {
+            try {
+                document.querySelector('#userPanel h1').textContent = `Smart Polling - Welcome ${currentUser}`;
+                
+                // Initialize activeUserPools if empty
+                if (activeUserPools.length === 0 && userPools.length > 0) {
+                    activeUserPools = [...userPools];
+                }
+                
+                // Update pool selector
+                updateUserPoolSelect();
+                
+                // Collect all questions from active pools only
+                let allQuestions = [];
+                let hasOpenPoll = false;
+                let openQuestionCount = 0;
+                
+                activeUserPools.forEach(poolId => {
+                    const poolData = appData.pools[poolId];
+                    if (poolData && Array.isArray(poolData.questions)) {
+                        poolData.questions.forEach(question => {
+                            // Validate question before adding
+                            if (!question || typeof question.id === 'undefined' || !question.text || !Array.isArray(question.options)) {
+                                console.log('Skipping invalid question:', question);
+                                return;
+                            }
+                            
+                            const isQuestionOpen = poolData.pollOpen && question.isOpen;
+                            if (isQuestionOpen) {
+                                hasOpenPoll = true;
+                                openQuestionCount++;
+                            }
+                            allQuestions.push({
+                                ...question,
+                                poolId: poolId,
+                                pollOpen: poolData.pollOpen,
+                                isQuestionOpen: isQuestionOpen
+                            });
+                        });
+                    }
+                });
+                
+                // Update poll status
+                const pollStatusUser = document.getElementById('pollStatusUser');
+                if (hasOpenPoll) {
+                    pollStatusUser.className = 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4 mb-6';
+                    pollStatusUser.innerHTML = `<p class="text-green-700 dark:text-green-400 font-medium">🟢 ${openQuestionCount} question(s) available for voting across your active pools!</p>`;
+                } else {
+                    pollStatusUser.className = 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6';
+                    pollStatusUser.innerHTML = '<p class="text-red-700 dark:text-red-400 font-medium">🔴 No questions are currently open for voting in your active pools.</p>';
+                }
+
+                // Update voting questions
+                const votingQuestions = document.getElementById('votingQuestions');
+                if (allQuestions.length === 0) {
+                    votingQuestions.innerHTML = '<div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-8 text-center"><p class="text-gray-500 dark:text-gray-400">No questions available yet in your active pools.</p></div>';
+                } else {
+                    try {
+                        votingQuestions.innerHTML = allQuestions.map(q => {
+                            try {
+                                const poolData = appData.pools[q.poolId];
+                                if (!poolData) return ''; // Skip if pool doesn't exist
+                                
+                                // Ensure user exists in pool's userVotes
+                                if (!poolData.userVotes[currentUser]) {
+                                    poolData.userVotes[currentUser] = {
+                                        votes: {},
+                                        correctTime: 0,
+                                        lastCorrectTime: null,
+                                        currentlyCorrect: false,
+                                        penalties: 0
+                                    };
+                                }
+                                
+                                const userData = poolData.userVotes[currentUser];
+                                
+                                // Ensure votes object exists
+                                if (!userData.votes || typeof userData.votes !== 'object') {
+                                    userData.votes = {};
+                                }
+                                
+                                const userAnswers = userData.votes[q.id] || [];
+                                
+                                return `
+                                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ${!q.isQuestionOpen ? 'opacity-50' : ''}">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div>
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded text-xs font-semibold">Pool ${q.poolId}</span>
+                                                    <span class="px-2 py-1 rounded text-xs ${q.isOpen ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400'}">
+                                                        ${q.isOpen ? 'Question Open' : 'Question Closed'}
+                                                    </span>
+                                                    ${!q.pollOpen ? '<span class="px-2 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 rounded text-xs">Poll Not Started</span>' : ''}
+                                                </div>
+                                                <h3 class="text-lg font-semibold">${q.text}</h3>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-3">
+                                            ${q.options.map((option, index) => `
+                                                <label class="flex items-center gap-3 p-3 border border-gray-200 dark:border-gray-700 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 ${userAnswers.includes(index) ? 'border-primary bg-primary/5' : ''} ${!q.isQuestionOpen ? 'cursor-not-allowed opacity-60' : ''}">
+                                                    <input type="checkbox" 
+                                                           ${userAnswers.includes(index) ? 'checked' : ''} 
+                                                           ${q.isQuestionOpen ? '' : 'disabled'}
+                                                           onchange="voteInPool(${q.poolId}, ${q.id}, ${index})"
+                                                           class="w-5 h-5 text-primary rounded focus:ring-primary ${!q.isQuestionOpen ? 'cursor-not-allowed' : ''}">
+                                                    <span class="flex-1">${option}</span>
+                                                </label>
+                                            `).join('')}
+                                        </div>
+                                        ${!q.isQuestionOpen && !q.pollOpen ? '<div class="mt-3 text-sm text-orange-600 dark:text-orange-400">⏸️ Waiting for admin to start the poll...</div>' : ''}
+                                        ${!q.isQuestionOpen && q.pollOpen ? '<div class="mt-3 text-sm text-gray-600 dark:text-gray-400">⏸️ Question not yet opened by admin</div>' : ''}
+                                    </div>
+                                `;
+                            } catch (questionError) {
+                                console.error('Error rendering question:', q, questionError);
+                                return '<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4"><p class="text-red-600 dark:text-red-400">⚠️ Error displaying question (ID: ' + (q.id || 'unknown') + ')</p></div>';
+                            }
+                        }).join('');
+                    } catch (mappingError) {
+                        console.error('Error mapping questions:', mappingError);
+                        votingQuestions.innerHTML = '<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"><p class="text-red-600 dark:text-red-400">⚠️ Error displaying questions. Please try refreshing or contact admin.</p></div>';
+                    }
+                }
+
+                updatePoolStats();
+
+            } catch (error) {
+                console.error('Error updating user interface:', error);
+                const votingQuestions = document.getElementById('votingQuestions');
+                if (votingQuestions) {
+                    votingQuestions.innerHTML = '<div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"><p class="text-red-600 dark:text-red-400">⚠️ Interface error. Please refresh the page or contact admin for assistance.</p></div>';
+                }
+            }
+        }
+
+        function updateUserStats() {
+            const poolData = getCurrentPoolData();
+            const userData = poolData.userVotes[currentUser];
+            if (!userData) return;
+
+            let totalCorrectTime = userData.correctTime;
+            
+            // Add current session time if user is currently correct
+            if (userData.currentlyCorrect && userData.lastCorrectTime && poolData.pollOpen) {
+                totalCorrectTime += Date.now() - userData.lastCorrectTime;
+            }
+
+            const totalScore = Math.max(0, totalCorrectTime - userData.penalties);
+
+            document.getElementById('correctTime').textContent = `${Math.floor(totalCorrectTime / 1000)}s`;
+            document.getElementById('penalties').textContent = `${Math.floor(userData.penalties / 1000)}s`;
+            document.getElementById('totalScore').textContent = `${Math.floor(totalScore / 1000)}s`;
+        }
+
+        function updateResults() {
+            const poolData = getCurrentPoolData();
+            const resultsList = document.getElementById('resultsList');
+            
+            if (!poolData || Object.keys(poolData.userVotes).length === 0) {
+                resultsList.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No results yet.</p>';
+                return;
+            }
+
+            // Calculate final correct times for all users
+            const now = Date.now();
+            const results = [];
+
+            Object.entries(poolData.userVotes).forEach(([username, userData]) => {
+                let totalCorrectTime = userData.correctTime;
+                
+                // Add current session time if user is currently correct
+                if (userData.currentlyCorrect && userData.lastCorrectTime && poolData.pollOpen) {
+                    totalCorrectTime += now - userData.lastCorrectTime;
+                }
+
+                const performanceScore = Math.max(0, totalCorrectTime - userData.penalties);
+
+                results.push({
+                    username,
+                    correctTime: totalCorrectTime,
+                    penalties: userData.penalties,
+                    performanceScore: performanceScore,
+                    currentlyCorrect: userData.currentlyCorrect
+                });
+            });
+
+            // Sort by performance score (descending)
+            results.sort((a, b) => b.performanceScore - a.performanceScore);
+
+            resultsList.innerHTML = `
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-blue-700 dark:text-blue-400 mb-2">📊 Correct Time</h3>
+                            <p class="text-sm text-blue-600 dark:text-blue-300">Total time spent with all correct answers selected</p>
+                        </div>
+                        <div class="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                            <h3 class="font-semibold text-purple-700 dark:text-purple-400 mb-2">🏆 Elite Performance Score</h3>
+                            <p class="text-sm text-purple-600 dark:text-purple-300">Correct time minus penalties for wrong final answers (30s per mistake)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-200 dark:border-gray-700">
+                        <thead>
+                            <tr class="bg-gray-50 dark:bg-gray-700">
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">Rank</th>
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">Username</th>
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">Correct Time</th>
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">🏆 Elite Score</th>
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">Penalties</th>
+                                <th class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-left">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${results.map((result, index) => `
+                                <tr class="${index === 0 ? 'bg-yellow-50 dark:bg-yellow-900/20' : ''}">
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2">
+                                        ${index === 0 ? '🏆' : '#' + (index + 1)}
+                                    </td>
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2 font-semibold">
+                                        <button onclick="viewUserAnswers('${result.username}')" class="text-primary hover:text-primary-dark underline">
+                                            ${result.username}
+                                        </button>
+                                    </td>
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2">${Math.floor(result.correctTime / 1000)}s</td>
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2 font-bold text-purple-600 dark:text-purple-400">${Math.floor(result.performanceScore / 1000)}s</td>
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2 text-red-500">${Math.floor(result.penalties / 1000)}s</td>
+                                    <td class="border border-gray-200 dark:border-gray-600 px-4 py-2">
+                                        <button onclick="deleteUser('${result.username}')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs transition-colors duration-200">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function deleteUser(username) {
+            showConfirmationModal(
+                'Delete User',
+                `Are you sure you want to delete user "${username}"? This will remove all their votes and data.`,
+                'Delete User',
+                () => {
+                    const poolData = getCurrentPoolData();
+                    delete poolData.userVotes[username];
+                    saveToFirebase();
+                    updateAdminInterface();
+                }
+            );
+        }
+
+        // User answers viewing functions
+        function viewUserAnswers(username) {
+            const poolData = getCurrentPoolData();
+            const userData = poolData.userVotes[username];
+            
+            if (!userData) {
+                console.log('User data not found');
+                return;
+            }
+
+            document.getElementById('modalUserName').textContent = username + "'s Answers";
+            
+            const userAnswersContent = document.getElementById('userAnswersContent');
+            
+            if (poolData.questions.length === 0) {
+                userAnswersContent.innerHTML = '<p class="text-gray-500 dark:text-gray-400">No questions available.</p>';
+            } else {
+                const questionsHtml = poolData.questions.map(question => {
+                    const userAnswers = userData.votes[question.id] || [];
+                    
+                    const optionsHtml = question.options.map((option, index) => {
+                        const isSelected = userAnswers.includes(index);
+                        const isCorrect = question.correctAnswers.includes(index);
+                        
+                        let styleClass = 'p-3 border rounded-lg ';
+                        if (isSelected && isCorrect) {
+                            styleClass += 'border-green-500 bg-green-50 dark:bg-green-900/20';
+                        } else if (isSelected && !isCorrect) {
+                            styleClass += 'border-red-500 bg-red-50 dark:bg-red-900/20';
+                        } else if (!isSelected && isCorrect) {
+                            styleClass += 'border-gray-300 dark:border-gray-600 bg-yellow-50 dark:bg-yellow-900/20';
+                        } else {
+                            styleClass += 'border-gray-300 dark:border-gray-600';
+                        }
+                        
+                        const selectedBadge = isSelected ? '<span class="text-blue-500 text-sm">✓ Selected</span>' : '';
+                        const correctBadge = isCorrect ? '<span class="text-green-500 text-sm">✓ Correct</span>' : '';
+                        
+                        return '<div class="' + styleClass + '"><div class="flex items-center justify-between"><span>' + option + '</span><div class="flex gap-2">' + selectedBadge + correctBadge + '</div></div></div>';
+                    }).join('');
+
+                    const hasExactlyCorrect = userAnswers.length > 0 &&
+                        userAnswers.length === question.correctAnswers.length &&
+                        userAnswers.every(ans => question.correctAnswers.includes(ans)) &&
+                        question.correctAnswers.every(ans => userAnswers.includes(ans));
+                    
+                    let answerStatus;
+                    if (hasExactlyCorrect) {
+                        answerStatus = '<span class="text-green-500 font-semibold">Exactly Correct ✓</span>';
+                    } else if (userAnswers.length === 0) {
+                        answerStatus = '<span class="text-gray-500">No answer</span>';
+                    } else {
+                        answerStatus = '<span class="text-red-500 font-semibold">Incorrect ✗</span>';
+                    }
+
+                    const questionStatus = question.isOpen ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400';
+                    const questionStatusText = question.isOpen ? 'Open' : 'Closed';
+                    
+                    return '<div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4 mb-4"><div class="flex justify-between items-start mb-3"><h3 class="font-semibold text-lg">' + question.text + '</h3><span class="px-2 py-1 rounded text-xs ' + questionStatus + '">' + questionStatusText + '</span></div><div class="space-y-2">' + optionsHtml + '</div><div class="mt-3 text-sm text-gray-600 dark:text-gray-400">' + (userAnswers.length === 0 ? '<span class="text-gray-500">No answers selected</span>' : 'Selected ' + userAnswers.length + ' option(s)') + ' | ' + answerStatus + '</div></div>';
+                }).join('');
+
+                const summaryHtml = '<div class="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg"><h4 class="font-semibold mb-2">Summary</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm"><div><span class="text-blue-600 dark:text-blue-400 font-semibold">' + Math.floor(userData.correctTime / 1000) + 's</span><div>Correct Time</div></div><div><span class="text-red-600 dark:text-red-400 font-semibold">' + Math.floor(userData.penalties / 1000) + 's</span><div>Penalties</div></div><div><span class="text-purple-600 dark:text-purple-400 font-semibold">' + Math.floor(Math.max(0, userData.correctTime - userData.penalties) / 1000) + 's</span><div>Elite Score</div></div></div></div>';
+
+                userAnswersContent.innerHTML = questionsHtml + summaryHtml;
+            }
+            
+            document.getElementById('userAnswersModal').classList.remove('hidden');
+        }
+
+        function closeUserAnswersModal() {
+            document.getElementById('userAnswersModal').classList.add('hidden');
+        }
+
+        // User Management Functions
+        function createUser() {
+            const username = document.getElementById('newUsername').value.trim();
+            const poolId = parseInt(document.getElementById('assignPoolSelect').value);
+            
+            if (!username) {
+                console.log('Please enter a username');
+                return;
+            }
+            
+            if (!poolId) {
+                console.log('Please select a pool');
+                return;
+            }
+            
+            // Initialize users object if it doesn't exist
+            if (!appData.users) {
+                appData.users = {};
+            }
+            
+            // Create or update user
+            if (!appData.users[username]) {
+                appData.users[username] = {
+                    pools: [],
+                    created: Date.now()
+                };
+            }
+            
+            // Add pool to user if not already assigned
+            if (!appData.users[username].pools.includes(poolId)) {
+                appData.users[username].pools.push(poolId);
+            }
+            
+            document.getElementById('newUsername').value = '';
+            document.getElementById('assignPoolSelect').value = '';
+            saveToFirebase();
+            updateAdminInterface();
+        }
+
+        function removeUserFromPool(username, poolId) {
+            if (!appData.users || !appData.users[username]) return;
+            
+            // Remove pool from user's assigned pools
+            appData.users[username].pools = appData.users[username].pools.filter(p => p !== poolId);
+            
+            // If user has no pools left, remove user entirely
+            if (appData.users[username].pools.length === 0) {
+                delete appData.users[username];
+            }
+            
+            // Also remove user from pool's voting data
+            if (appData.pools[poolId] && appData.pools[poolId].userVotes) {
+                delete appData.pools[poolId].userVotes[username];
+            }
+            
+            saveToFirebase();
+            updateAdminInterface();
+        }
+
+        function updateAssignPoolSelect() {
+            const assignPoolSelect = document.getElementById('assignPoolSelect');
+            assignPoolSelect.innerHTML = '<option value="">-- Select Pool --</option>';
+            
+            Object.keys(appData.pools).forEach(poolId => {
+                const option = document.createElement('option');
+                option.value = poolId;
+                option.textContent = `Pool ${poolId}`;
+                assignPoolSelect.appendChild(option);
+            });
+        }
+
+        function updateUsersList() {
+            const usersList = document.getElementById('usersList');
+            
+            if (!appData.users || Object.keys(appData.users).length === 0) {
+                usersList.innerHTML = '<p class="text-gray-500">No users created yet.</p>';
+                return;
+            }
+            
+            let usersHtml = '<div class="space-y-2">';
+            Object.entries(appData.users).forEach(([username, userData]) => {
+                const poolsList = userData.pools.map(poolId => `Pool ${poolId}`).join(', ');
+                usersHtml += `
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="font-semibold">${username}</p>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">Pools: ${poolsList || 'None'}</p>
+                                <p class="text-xs text-gray-500">Created: ${new Date(userData.created).toLocaleDateString()}</p>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                ${userData.pools.map(poolId => `
+                                    <button onclick="removeUserFromPool('${username}', ${poolId})" 
+                                            class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">
+                                        Remove from Pool ${poolId}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            usersHtml += '</div>';
+            usersList.innerHTML = usersHtml;
+        }
+
+        function updateUserPoolSelector() {
+            // No longer needed - users don't select pools manually
+        }
+
+        // New voting function for users across pools
+        function voteInPool(poolId, questionId, optionIndex) {
+            const poolData = appData.pools[poolId];
+            if (!poolData || !poolData.pollOpen) return;
+
+            // Check if question is open
+            const question = poolData.questions.find(q => q.id === questionId);
+            if (!question || !question.isOpen) return;
+
+            // Temporarily set currentPool for voting logic
+            const originalPool = currentPool;
+            currentPool = poolId;
+            
+            initializeUser();
+            const userData = poolData.userVotes[currentUser];
+            
+            if (!userData.votes[questionId]) {
+                userData.votes[questionId] = [];
+            }
+
+            const currentVotes = userData.votes[questionId];
+            const optionIndexNum = parseInt(optionIndex);
+            
+            if (currentVotes.includes(optionIndexNum)) {
+                // Remove vote
+                userData.votes[questionId] = currentVotes.filter(v => v !== optionIndexNum);
+            } else {
+                // Add vote
+                userData.votes[questionId] = [...currentVotes, optionIndexNum];
+            }
+
+            // Update correctness for this pool
+            updateUserCorrectnessInPool(poolId);
+            
+            // Restore original pool
+            currentPool = originalPool;
+            
+            saveToFirebase();
+            updateUserInterface();
+        }
+
+        function updateUserCorrectnessInPool(poolId) {
+            const poolData = appData.pools[poolId];
+            if (!poolData || !poolData.pollOpen || poolData.questions.length === 0) return;
+
+            const userData = poolData.userVotes[currentUser];
+            if (!userData) return;
+            
+            const now = Date.now();
+            let allCorrect = true;
+            
+            // Only check open questions for correct time counting
+            const openQuestions = poolData.questions.filter(q => q.isOpen);
+            
+            if (openQuestions.length === 0) {
+                // No open questions, stop counting time
+                if (userData.currentlyCorrect && userData.lastCorrectTime) {
+                    userData.correctTime += now - userData.lastCorrectTime;
+                }
+                userData.currentlyCorrect = false;
+                userData.lastCorrectTime = null;
+                return;
+            }
+            
+            for (const question of openQuestions) {
+                const userAnswers = userData.votes[question.id] || [];
+                const correctAnswers = question.correctAnswers;
+                
+                // User must have EXACTLY the correct answers
+                const hasExactlyCorrectAnswers = userAnswers.length > 0 &&
+                    userAnswers.length === correctAnswers.length &&
+                    userAnswers.every(ans => correctAnswers.includes(ans)) &&
+                    correctAnswers.every(ans => userAnswers.includes(ans));
+                
+                if (!hasExactlyCorrectAnswers) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+
+            // Update correct time tracking
+            if (allCorrect && !userData.currentlyCorrect) {
+                userData.lastCorrectTime = now;
+                userData.currentlyCorrect = true;
+            } else if (!allCorrect && userData.currentlyCorrect) {
+                if (userData.lastCorrectTime) {
+                    userData.correctTime += now - userData.lastCorrectTime;
+                }
+                userData.currentlyCorrect = false;
+                userData.lastCorrectTime = null;
+            }
+        }
+
+        // Function to update ALL users' correctness in a pool when questions are opened/closed
+        function updateAllUsersCorrectnessInPool(poolId) {
+            const poolData = appData.pools[poolId];
+            if (!poolData || !poolData.pollOpen) return;
+
+            console.log(`🔄 Updating correctness for all users in pool ${poolId}`);
+            
+            const now = Date.now();
+            const openQuestions = poolData.questions.filter(q => q.isOpen);
+            
+            // Update correctness for every user in this pool
+            Object.keys(poolData.userVotes).forEach(username => {
+                const userData = poolData.userVotes[username];
+                if (!userData || !userData.votes) return; // Skip invalid user data
+                
+                let allCorrect = true;
+                
+                if (openQuestions.length === 0) {
+                    // No open questions, stop counting time for this user
+                    if (userData.currentlyCorrect && userData.lastCorrectTime) {
+                        userData.correctTime += now - userData.lastCorrectTime;
+                        console.log(`⏹️ Stopped timer for user ${username} - no open questions`);
+                    }
+                    userData.currentlyCorrect = false;
+                    userData.lastCorrectTime = null;
+                    return;
+                }
+                
+                for (const question of openQuestions) {
+                    const userAnswers = userData.votes[question.id] || [];
+                    const correctAnswers = question.correctAnswers;
+                    
+                    // User must have EXACTLY the correct answers
+                    const hasExactlyCorrectAnswers = userAnswers.length > 0 &&
+                        userAnswers.length === correctAnswers.length &&
+                        userAnswers.every(ans => correctAnswers.includes(ans)) &&
+                        correctAnswers.every(ans => userAnswers.includes(ans));
+                    
+                    if (!hasExactlyCorrectAnswers) {
+                        allCorrect = false;
+                        break;
+                    }
+                }
+
+                // Update correct time tracking for this user
+                if (allCorrect && !userData.currentlyCorrect) {
+                    // User just became correct
+                    userData.lastCorrectTime = now;
+                    userData.currentlyCorrect = true;
+                    console.log(`▶️ Started timer for user ${username} - all correct`);
+                } else if (!allCorrect && userData.currentlyCorrect) {
+                    // User was correct but no longer is (question closed or wrong answer)
+                    if (userData.lastCorrectTime) {
+                        userData.correctTime += now - userData.lastCorrectTime;
+                        console.log(`⏹️ Stopped timer for user ${username} - no longer all correct`);
+                    }
+                    userData.currentlyCorrect = false;
+                    userData.lastCorrectTime = null;
+                }
+            });
+        }
+
+        function updateUserStatsAcrossAllPools() {
+            let totalCorrectTime = 0;
+            let totalPenalties = 0;
+            
+            userPools.forEach(poolId => {
+                const poolData = appData.pools[poolId];
+                if (poolData && poolData.userVotes && poolData.userVotes[currentUser]) {
+                    const userData = poolData.userVotes[currentUser];
+                    let userCorrectTime = userData.correctTime || 0;
+                    
+                    // Add current session time if user is currently correct
+                    if (userData.currentlyCorrect && userData.lastCorrectTime && poolData.pollOpen) {
+                        userCorrectTime += Date.now() - userData.lastCorrectTime;
+                    }
+                    
+                    totalCorrectTime += userCorrectTime;
+                    totalPenalties += userData.penalties || 0;
+                }
+            });
+
+            const totalScore = Math.max(0, totalCorrectTime - totalPenalties);
+
+            document.getElementById('correctTime').textContent = `${Math.floor(totalCorrectTime / 1000)}s`;
+            document.getElementById('penalties').textContent = `${Math.floor(totalPenalties / 1000)}s`;
+            document.getElementById('totalScore').textContent = `${Math.floor(totalScore / 1000)}s`;
+        }
+
+        // Custom confirmation modal system
+        let pendingAction = null;
+
+        function showConfirmationModal(title, message, buttonText, action) {
+            document.getElementById('confirmationTitle').textContent = title;
+            document.getElementById('confirmationMessage').textContent = message;
+            document.getElementById('confirmButton').textContent = buttonText;
+            pendingAction = action;
+            document.getElementById('confirmationModal').classList.remove('hidden');
+        }
+
+        function closeConfirmationModal() {
+            document.getElementById('confirmationModal').classList.add('hidden');
+            pendingAction = null;
+        }
+
+        function confirmAction() {
+            if (pendingAction) {
+                pendingAction();
+                closeConfirmationModal();
+            }
+        }
+
+        // Pool deletion function
+        function deletePool(poolId) {
+            showConfirmationModal(
+                'Delete Pool',
+                `⚠️ Are you sure you want to delete Pool ${poolId}? This will remove:\n\n• All questions in this pool\n• All user votes and data\n• All user assignments to this pool\n\nThis action cannot be undone!`,
+                'Delete Pool',
+                () => {
+                    // Remove pool from all users
+                    if (appData.users) {
+                        Object.keys(appData.users).forEach(username => {
+                            appData.users[username].pools = appData.users[username].pools.filter(p => p != poolId);
+                            // Remove user if they have no pools left
+                            if (appData.users[username].pools.length === 0) {
+                                delete appData.users[username];
+                            }
+                        });
+                    }
+                    
+                    // Remove the pool itself
+                    delete appData.pools[poolId];
+                    
+                    // If this was the currently selected pool, deselect it
+                    if (currentPool == poolId) {
+                        currentPool = null;
+                    }
+                    
+                    saveToFirebase();
+                    updateAdminInterface();
+                    console.log(`Pool ${poolId} deleted successfully`);
+                }
+            );
+        }
+
+        // User Pool Selection Functions
+        let activeUserPools = []; // Pools currently selected by user for display
+
+        function updateUserPoolSelect() {
+            const userPoolSelect = document.getElementById('userPoolSelect');
+            if (!userPoolSelect) return;
+            
+            userPoolSelect.innerHTML = '';
+            
+            userPools.forEach(poolId => {
+                const option = document.createElement('option');
+                option.value = poolId;
+                option.textContent = `Pool ${poolId}`;
+                option.selected = activeUserPools.includes(parseInt(poolId));
+                userPoolSelect.appendChild(option);
+            });
+            
+            updatePoolStats();
+        }
+
+        function updateActiveUserPools() {
+            const userPoolSelect = document.getElementById('userPoolSelect');
+            activeUserPools = Array.from(userPoolSelect.selectedOptions).map(option => parseInt(option.value));
+            
+            // Update user interface with new selection
+            updateUserInterface();
+            updatePoolStats();
+        }
+
+        function selectAllUserPools() {
+            const userPoolSelect = document.getElementById('userPoolSelect');
+            for (let option of userPoolSelect.options) {
+                option.selected = true;
+            }
+            updateActiveUserPools();
+        }
+
+        function updatePoolStats() {
+            const activePoolsCount = document.getElementById('activePoolsCount');
+            const availableQuestionsCount = document.getElementById('availableQuestionsCount');
+            
+            if (!activePoolsCount || !availableQuestionsCount) return;
+            
+            let totalQuestions = 0;
+            
+            activeUserPools.forEach(poolId => {
+                const poolData = appData.pools[poolId];
+                if (poolData && poolData.questions) {
+                    totalQuestions += poolData.questions.length;
+                }
+            });
+            
+            activePoolsCount.textContent = activeUserPools.length;
+            availableQuestionsCount.textContent = totalQuestions;
+        }
+
+        function refreshUserData() {
+            console.log('🔄 Refreshing user data...');
+            
+            // Show loading state
+            const refreshButton = document.querySelector('button[onclick="refreshUserData()"]');
+            const originalText = refreshButton.innerHTML;
+            refreshButton.innerHTML = '<svg class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>Refreshing...';
+            refreshButton.disabled = true;
+            
+            // Force Firebase sync
+            database.ref('appData').once('value')
+                .then((snapshot) => {
+                    console.log('✅ Data refreshed successfully');
+                    updateUserInterface();
+                    
+                    // Reset button
+                    setTimeout(() => {
+                        refreshButton.innerHTML = originalText;
+                        refreshButton.disabled = false;
+                    }, 1000);
+                })
+                .catch((error) => {
+                    console.error('❌ Error refreshing data:', error);
+                    refreshButton.innerHTML = originalText;
+                    refreshButton.disabled = false;
+                });
+        }
+
+        function updateAllInterfaces() {
+            if (isAdmin) {
+                updateAssignPoolSelect();
+                updateUsersList();
+                updateAdminInterface();
+            } else if (currentUser) {
+                updateUserPoolSelect();
+                updateUserInterface();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Initializing Smart Polling App...');
+            setupFirebaseListeners();
+            updateConnectionStatus('connecting');
+        });
+
+        // Update admin results periodically when viewing a pool
+        setInterval(() => {
+            if (isAdmin && currentPool) {
+                updateResults();
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

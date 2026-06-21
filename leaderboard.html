@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Live leaderboard — Technology diffusion</title>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<style>
+  :root { --accent:#005AA0; --accent2:#003C6E; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+         background:#fff; color:#222; }
+  .wrap { padding:10px 14px; }
+  h1 { font-size:18px; color:var(--accent2); margin:0 0 2px; }
+  .sub { font-size:12px; color:#777; margin-bottom:8px; }
+  .sub a { color:var(--accent); }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  th { text-align:left; color:#888; font-weight:600; font-size:12px; border-bottom:2px solid var(--accent);
+       padding:4px 6px; }
+  td { padding:5px 6px; border-bottom:1px solid #eee; }
+  td.rank { width:34px; color:#999; font-variant-numeric:tabular-nums; }
+  td.score { text-align:right; font-variant-numeric:tabular-nums; font-weight:600; color:var(--accent); width:70px; }
+  tr.top1 td.rank { color:#C9A227; font-weight:700; }
+  tr.top1 td.name { font-weight:700; }
+  .empty { color:#999; font-style:italic; padding:14px 6px; }
+  .foot { font-size:11px; color:#aaa; margin-top:8px; }
+  @media (prefers-color-scheme: dark) {
+    body { background:#0f172a; color:#e5e7eb; }
+    h1 { color:#cfe0f0; } td { border-color:#1e293b; } td.score { color:#7db8e8; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏆 Live leaderboard</h1>
+  <div class="sub">Pool: <b>Technology diffusion models</b> ·
+    join at <a href="https://sites.google.com/view/angelocuzzola/technology-diffusion" target="_blank">the course page</a></div>
+  <table>
+    <thead><tr><th>#</th><th>Participant</th><th style="text-align:right">Score (s)</th></tr></thead>
+    <tbody id="rows"><tr><td colspan="3" class="empty">Connecting…</td></tr></tbody>
+  </table>
+  <div class="foot" id="foot"></div>
+</div>
+<script>
+  // Same Firebase project as the polling app (read-only here).
+  const firebaseConfig = {
+    apiKey: "AIzaSyBzYBncDXuDAZHFGLF5YBinB_ftaz7I0qI",
+    authDomain: "technology-diffusion-models.firebaseapp.com",
+    databaseURL: "https://technology-diffusion-models-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "technology-diffusion-models",
+    appId: "1:724453899347:web:314aa1b0787d5b3b62daa6"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  // which pool to show (default: 2025-26 cohort). Override with ?pool=NNN
+  const params = new URLSearchParams(location.search);
+  const POOL = params.get("pool") || "2026";
+  const TOPN = parseInt(params.get("top") || "12", 10);
+
+  function score(u, pollOpen) {
+    let t = (u && u.correctTime) || 0;
+    if (u && u.currentlyCorrect && u.lastCorrectTime && pollOpen) t += Date.now() - u.lastCorrectTime;
+    return Math.max(0, t - ((u && u.penalties) || 0));
+  }
+
+  function render(pool) {
+    const rows = document.getElementById("rows");
+    const foot = document.getElementById("foot");
+    if (!pool || !pool.userVotes) {
+      rows.innerHTML = '<tr><td colspan="3" class="empty">Waiting for participants to join…</td></tr>';
+      foot.textContent = "Pool " + POOL;
+      return;
+    }
+    const open = !!pool.pollOpen;
+    const list = Object.entries(pool.userVotes)
+      .map(([name, u]) => ({ name, s: score(u, open) }))
+      .sort((a, b) => b.s - a.s);
+    if (!list.length) {
+      rows.innerHTML = '<tr><td colspan="3" class="empty">Waiting for participants to join…</td></tr>';
+    } else {
+      rows.innerHTML = list.slice(0, TOPN).map((r, i) =>
+        `<tr class="${i === 0 ? 'top1' : ''}"><td class="rank">${i + 1}</td>`
+        + `<td class="name">${r.name.replace(/[<>&]/g, '')}</td>`
+        + `<td class="score">${Math.floor(r.s / 1000)}</td></tr>`).join("");
+    }
+    foot.textContent = (open ? "🟢 Poll open" : "🔴 Poll closed")
+      + " · " + list.length + " participant(s)";
+  }
+
+  db.ref("appData/pools/" + POOL).on("value", s => render(s.val()));
+  // refresh the live ticking score every second while a poll is open
+  let last = null;
+  db.ref("appData/pools/" + POOL).on("value", s => { last = s.val(); });
+  setInterval(() => { if (last && last.pollOpen) render(last); }, 1000);
+</script>
+</body>
+</html>
