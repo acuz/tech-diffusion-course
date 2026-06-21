@@ -633,14 +633,13 @@ Angelo Cuzzola
 <section id="interactive-the-logistic-model" class="slide level2" data-background-color="#f5f7fa">
 <h2>Interactive: the logistic model</h2>
 <p>Move the sliders for <span class="math inline">\(\lambda_0,\lambda_1,x_0\)</span> and watch <span class="math inline">\(x(t)\)</span> — full diffusion when <span class="math inline">\(\lambda_0+\lambda_1&gt;0\)</span>, partial when <span class="math inline">\(&lt;0\)</span>.</p>
-<!-- SHINY_URL: after deploying, replace data-src below with your shinyapps.io URL -->
-<iframe class="poolframe" data-src="about:blank" data-shiny="mansfield">
-</iframe>
+<p><img data-src="images/logistic_model_lambda1_positive.png" class="quarto-figure quarto-figure-center" style="width:52.0%"> <!-- SHINY_URL: once deployed, replace the image above with:
+     <iframe class="poolframe" data-src="https://YOURNAME.shinyapps.io/tech-diffusion-models/"></iframe> --></p>
 <div style="font-size:0.8em">
 <div class="callout callout-tip no-icon callout-style-simple">
 <div class="callout-body">
 <div class="callout-content">
-<p>Local app: <code>shiny::runApp("scripts/shiny_diffusion")</code> → <strong>Mansfield</strong> tab. Try a fast S-curve (<span class="math inline">\(\lambda_1=2.4\)</span>) vs a slow one (<span class="math inline">\(\lambda_1=0.2\)</span>).</p>
+<p>Live app (local): <code>shiny::runApp("scripts/shiny_diffusion")</code> → <strong>Mansfield</strong> tab. Try a fast S-curve (<span class="math inline">\(\lambda_1=2.4\)</span>) vs a slow one (<span class="math inline">\(\lambda_1=0.2\)</span>).</p>
 </div>
 </div>
 </div>
@@ -751,14 +750,13 @@ Angelo Cuzzola
 <section id="interactive-competing-technologies" class="slide level2" data-background-color="#f5f7fa">
 <h2>Interactive: competing technologies</h2>
 <p>Set <span class="math inline">\(a^j_i\)</span>, the return <span class="math inline">\(r\)</span>, the seed and horizon; watch <span class="math inline">\(d(t)\)</span> and the barriers. Under <span class="math inline">\(r&gt;0\)</span>, change only the seed and the <strong>winner changes</strong> (non-ergodicity).</p>
-<!-- SHINY_URL: after deploying, replace data-src below with your shinyapps.io URL -->
-<iframe class="poolframe" data-src="about:blank" data-shiny="arthur">
-</iframe>
+<p><img data-src="images/het_adopters_absorbing_barriers.png" class="quarto-figure quarto-figure-center" style="width:52.0%"> <!-- SHINY_URL: once deployed, replace the image above with:
+     <iframe class="poolframe" data-src="https://YOURNAME.shinyapps.io/tech-diffusion-models/"></iframe> --></p>
 <div style="font-size:0.8em">
 <div class="callout callout-tip no-icon callout-style-simple">
 <div class="callout-body">
 <div class="callout-content">
-<p>Local app: <code>shiny::runApp("scripts/shiny_diffusion")</code> → <strong>Arthur</strong> tab.</p>
+<p>Live app (local): <code>shiny::runApp("scripts/shiny_diffusion")</code> → <strong>Arthur</strong> tab.</p>
 </div>
 </div>
 </div>
