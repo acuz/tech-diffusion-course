@@ -1035,10 +1035,12 @@
         function updateAdminInterface() {
             // Check if we're on the admin panel
             if (!isAdmin) return;
-            
+
             updatePoolSelect();
             updatePoolOverview();
-            
+            updateAssignPoolSelect();   // refresh user/pool lists on every admin render
+            updateUsersList();          // (fixes "No users created yet" after preloading)
+
             const adminPanelTitle = document.getElementById('adminPanelTitle');
             if (!adminPanelTitle) return; // Exit if element doesn't exist
             
