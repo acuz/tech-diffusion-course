@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="tech_diffusion_notes_files/libs/clipboard/clipboard.min.js"></script>
+<script src="tech_diffusion_notes_files/libs/quarto-html/tabby.min.js"></script>
+<script src="tech_diffusion_notes_files/libs/quarto-html/popper.min.js"></script>
+<script src="tech_diffusion_notes_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="tech_diffusion_notes_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="tech_diffusion_notes_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="tech_diffusion_notes_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
+
+  <meta name="author" content="Angelo Cuzzola">
+  <title>Technological Diffusion</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="tech_diffusion_notes_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="tech_diffusion_notes_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="tech_diffusion_notes_files/libs/revealjs/dist/theme/quarto-8d7de7ab73a0586eb3d22579354e7c68.css">
+  <link href="tech_diffusion_notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="tech_diffusion_notes_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="tech_diffusion_notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="tech_diffusion_notes_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+  <!-- Lightweight client-side access gate for the public GitHub Pages deck.
+       NOTE: this deters casual visitors but is NOT strong security — the page
+       content ships to the browser. Do not put anything truly sensitive here.
+       The access password is stored only as a SHA-256 hash below. -->
+  <style>
+    #td-gate { position:fixed; inset:0; z-index:100000; background:#003C6E;
+               display:flex; align-items:center; justify-content:center;
+               font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; }
+    #td-gate .box { background:#fff; padding:34px 30px; border-radius:14px;
+                    box-shadow:0 12px 48px rgba(0,0,0,.35); text-align:center; max-width:340px; width:90%; }
+    #td-gate h2 { color:#003C6E; margin:0 0 4px; font-size:22px; }
+    #td-gate p  { color:#666; font-size:14px; margin:0 0 18px; }
+    #td-gate input { width:100%; padding:11px; font-size:16px; border:1px solid #ccc; border-radius:8px; }
+    #td-gate button { margin-top:14px; width:100%; padding:11px; background:#005AA0; color:#fff;
+                      border:0; border-radius:8px; font-size:16px; cursor:pointer; }
+    #td-gate .err { color:#be2828; font-size:13px; height:16px; margin-top:8px; }
+    html.td-locked { overflow:hidden; }
+    html.td-locked .reveal { visibility:hidden; }
+  </style>
+  <script>
+  (function () {
+    // SHA-256 of the access password ("tech_diffusion_2026").
+    var HASH = "f428af79b921b7b202414efa74bb91ceda69ff6b6d012747252b9a9a5aebe2ce";
+    // Don't gate local file:// previews or contexts without WebCrypto.
+    if (location.protocol === "file:" || !(window.crypto && crypto.subtle)) return;
+    if (sessionStorage.getItem("td_unlocked") === "1") return;
+    document.documentElement.classList.add("td-locked");
+    function build() {
+      var g = document.createElement("div");
+      g.id = "td-gate";
+      g.innerHTML =
+        '<div class="box"><h2>Technological Diffusion</h2>' +
+        '<p>Enter the access password</p>' +
+        '<input id="td-pw" type="password" autocomplete="off">' +
+        '<div class="err" id="td-err"></div>' +
+        '<button id="td-btn">Enter</button></div>';
+      document.body.appendChild(g);
+      async function sha(s) {
+        var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+        return Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2, "0")).join("");
+      }
+      async function go() {
+        var h = await sha(document.getElementById("td-pw").value);
+        if (h === HASH) {
+          sessionStorage.setItem("td_unlocked", "1");
+          g.remove();
+          document.documentElement.classList.remove("td-locked");
+        } else {
+          document.getElementById("td-err").textContent = "Wrong password";
+        }
+      }
+      document.getElementById("td-btn").onclick = go;
+      document.getElementById("td-pw").addEventListener("keydown", function (e) {
+        if (e.key === "Enter") go();
+      });
+      document.getElementById("td-pw").focus();
+    }
+    if (document.body) build();
+    else document.addEventListener("DOMContentLoaded", build);
+  })();
+  </script>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-color="#ffffff" class="quarto-title-block center">
+  <h1 class="title">Technological Diffusion</h1>
+  <p class="subtitle">Models, Cases, and Modern Evidence</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Angelo Cuzzola 
+</div>
+        <p class="quarto-title-affiliation">
+            Institute of Economics, Scuola Superiore Sant’Anna
+          </p>
+    </div>
+</div>
+
+  <p class="date">Invalid Date</p>
+</section>
+<section id="roadmap" class="slide level2">
+<h2>Roadmap</h2>
+<aside class="notes">
+<ul>
+<li>Two 2-hour sessions. Part I = vocabulary + a classification game + historical cases; Part II = two models you’ll <strong>run live</strong>, then three recent empirical papers.</li>
+<li>Throughline (the italic lines): <em>what decides whether, how fast, and which way a technology spreads?</em></li>
+<li>Ask them to keep <strong>phones ready</strong> — there’s a live poll today.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p><strong>Part I — Concepts and qualitative models</strong></p>
+<ul>
+<li>What diffusion is, the <strong>S-curve</strong>, path dependence and increasing returns</li>
+<li><strong>Nelson et al.&nbsp;(2004)</strong>: a framework of four models of adoption</li>
+<li>An interactive <strong>classification game</strong> + historical case studies</li>
+</ul>
+<div style="color:#555">
+<p><em>Why do some technologies spread fast, others lock in, and others fade as fads?</em></p>
+</div>
+<p><strong>Part II — Formal models and recent evidence</strong></p>
+<ul>
+<li><strong>Mansfield (1961)</strong>: the logistic model of a single successful innovation</li>
+<li><strong>Arthur (1989/1994)</strong>: competing technologies, lock-in and path dependence</li>
+<li>Three <strong>recent studies</strong>: Dahlke et al.&nbsp;(2024), Ayerst et al.&nbsp;(2023), Sun &amp; Trefler (2023)</li>
+</ul>
+<div style="color:#555">
+<p><em>From hand-drawn dynamics to AI diffusion measured with web-scraping and LLMs — plus a <strong>live poll</strong> (Part I) and a <strong>Shiny app</strong> (Part II).</em></p>
+</div>
+</section>
+<section>
+<section id="part-i-concepts-and-qualitative-models" class="title-slide slide level1 center">
+<h1>Part I — Concepts and qualitative models</h1>
+
+</section>
+<section id="quick-overview-of-the-topics" class="slide level2">
+<h2>Quick overview of the topics</h2>
+<aside class="notes">
+<ul>
+<li>Signpost only (~30 s). Name the three pillars — <strong>Nelson framework → Mansfield → Arthur</strong> — and that we close on AI-era empirics. Don’t dwell.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>We start from the <strong>general framework</strong> of innovation diffusion of Nelson, Peterhansl &amp; Sampat (2004).</p>
+<p>We then study the most common model of the diffusion of a single <strong>successful</strong> technology, based on Mansfield (1961).</p>
+<p>Next we analyse a model of <strong>competing</strong> technologies introduced by Arthur (1989).</p>
+<p>Finally, we look at <strong>three recent empirical papers</strong> that bring these ideas to data on AI, firm networks and international trade.</p>
+</section>
+<section id="why-study-technology-diffusion" class="slide level2">
+<h2>Why study technology diffusion?</h2>
+<aside class="notes">
+<ul>
+<li>Hook: show of hands — <em>“does the best technology always win?”</em></li>
+<li>Walk the four puzzles: <strong>EV vs ChatGPT</strong> (speed varies by a century); <strong>QWERTY/VHS</strong> (best doesn’t win → lock-in); <strong>Semmelweis</strong> (clear evidence, decades to adopt → evidence isn’t enough); <strong>Glass/Segway/3D-TV</strong> (adoption never guaranteed — and note Mansfield will <em>assume</em> everyone adopts).</li>
+<li>Land the <strong>key insight</strong>: diffusion = technology × social system. This motivates the whole course.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:50%;">
+<ul>
+<li>Innovations rarely succeed or fail <strong>immediately</strong> — adoption is a <strong>process</strong>, not an event</li>
+<li>Even <strong>clearly superior</strong> technologies can spread slowly, stall, or lose</li>
+<li>Studying diffusion lets us <strong>predict</strong> success/failure, <strong>design policy</strong> (vaccines, the green transition, AI), and explain <strong>lock-in</strong></li>
+</ul>
+<p><strong>Key insight:</strong> diffusion is not about the technology alone, but about how it interacts with <strong>social systems, networks and existing practices</strong>.</p>
+</div><div class="column" style="width:50%;">
+<p><strong>Concrete puzzles</strong></p>
+<ul>
+<li>⚡ The <strong>electric car</strong> (invented ~1900) is scaling only now — yet <strong>ChatGPT</strong> reached 100M users in ~2 months</li>
+<li>⌨️ <strong>QWERTY</strong> still beats the faster Dvorak; <strong>VHS</strong> beat the “better” Betamax</li>
+<li>🩺 Antiseptic <strong>handwashing</strong> (Semmelweis, 1840s) took <strong>decades</strong> despite clear evidence</li>
+<li>🕶️ <strong>Google Glass, the Segway, 3D TV</strong>: hyped and capable — yet failed to diffuse</li>
+</ul>
+<div style="font-size:0.8em;color:#555">
+<p>Same question every time: <em>what decides whether, how fast, and which way a technology spreads?</em></p>
+</div>
+</div></div>
+</section>
+<section id="the-elements-of-modern-diffusion-theory" class="slide level2">
+<h2>The elements of modern diffusion theory</h2>
+<aside class="notes">
+<ul>
+<li>Rogers (1962) gave the first systematic vocabulary. Five elements — stress <strong>Time</strong> (a process, not an event) and <strong>Social system</strong> (context decides).</li>
+<li>The “core question” is the course’s question.</li>
+<li>Transition: Rogers <em>describes</em> diffusion but doesn’t explain <em>why</em> patterns differ — that’s Nelson’s job.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Everett Rogers (1962) identified <strong>five key elements</strong>:</p>
+<ol type="1">
+<li><strong>The innovation itself</strong> — what is being adopted?</li>
+<li><strong>Communication channels</strong> — how information spreads</li>
+<li><strong>Time</strong> — adoption is a process, not an event</li>
+<li><strong>Social system</strong> — context matters (networks, norms, opinion leaders)</li>
+<li><strong>Adopters</strong> — different people adopt at different times</li>
+</ol>
+<p><strong>Core question:</strong> how, why, and at what rate do new ideas and technologies spread through a population?</p>
+</section>
+<section id="the-typical-diffusion-pattern-the-s-curve" class="slide level2">
+<h2>The typical diffusion pattern: the S-curve</h2>
+<aside class="notes">
+<ul>
+<li>The empirical regularity we keep meeting. Three phases: slow start (innovators under uncertainty) → rapid growth (imitation, falling uncertainty) → saturation.</li>
+<li>Part II’s Mansfield model is built to <strong>generate exactly this curve</strong>.</li>
+<li>Provocation: why do some technologies <em>never finish</em> the curve?</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:62%;">
+<svg class="diagram" viewbox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="max-height:330px">
+<defs><marker id="arr" markerwidth="10" markerheight="10" refx="6" refy="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#222"></path></marker></defs> <line x1="60" y1="285" x2="655" y2="285" stroke="#222" stroke-width="2" marker-end="url(#arr)"></line> <line x1="60" y1="285" x2="60" y2="25" stroke="#222" stroke-width="2" marker-end="url(#arr)"></line> <text x="650" y="308" text-anchor="end" font-size="17">Time</text> <text x="68" y="22" font-size="17">Adoption (%)</text> <path d="M72,278 C 190,274 210,250 255,205 C 320,140 380,70 470,62 C 560,55 620,52 648,50" fill="none" stroke="#005AA0" stroke-width="3"></path> <g stroke="#bbb" stroke-dasharray="4"> <line x1="175" y1="285" x2="175" y2="240"></line> <line x1="290" y1="285" x2="290" y2="170"></line> <line x1="405" y1="285" x2="405" y2="90"></line> <line x1="520" y1="285" x2="520" y2="60"></line> </g> <g font-size="12" fill="#555" text-anchor="middle"> <text x="118" y="300">Innovators</text> <text x="232" y="300">Early adopters</text> <text x="347" y="300">Early majority</text> <text x="462" y="300">Late majority</text> <text x="585" y="300">Laggards</text> </g>
+</svg>
+</div><div class="column" style="width:38%;">
+<p>Successful innovations trace an <strong>S-shape</strong>:</p>
+<ul>
+<li><strong>Slow start</strong> — innovators experiment under uncertainty</li>
+<li><strong>Rapid growth</strong> — mainstream adoption as information spreads and uncertainty falls</li>
+<li><strong>Saturation</strong> — most potential adopters have adopted; the curve flattens</li>
+</ul>
+</div></div>
+<p>The whole course asks: <strong>what generates this curve</strong>, and <strong>why do some technologies never complete it</strong>?</p>
+</section>
+<section id="evolutionary-perspective-path-dependence" class="slide level2">
+<h2>Evolutionary perspective: path dependence</h2>
+<aside class="notes">
+<ul>
+<li>Dosi’s evolutionary view: <strong>history matters</strong>. Three degrees — weak (time passes) / moderate (transitions costly) / <strong>strong</strong> (early events lock in outcomes).</li>
+<li>Mechanisms: dynamic increasing returns, non-linearities, lock-in.</li>
+<li>This is the conceptual seed for <strong>Arthur</strong> in Part II.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>History matters (Dosi, 2023). Three levels of “historicity”:</p>
+<ol type="1">
+<li><strong>Weak history</strong> — acknowledges time passes</li>
+<li><strong>Moderate history</strong> — transitions take time and have costs</li>
+<li><strong>Strong history</strong> — path-dependence: early events can determine long-run outcomes</li>
+</ol>
+<p><strong>Mechanisms:</strong> dynamic increasing returns (learning by doing, network effects); non-linearities; lock-in to inferior technologies.</p>
+</section>
+<section id="dynamic-increasing-returns" class="slide level2">
+<h2>Dynamic increasing returns</h2>
+<aside class="notes">
+<ul>
+<li>Two flavours. <strong>Supply-side</strong>: learning-by-doing, spillovers — unit costs fall as cumulative output grows. <strong>Demand-side</strong>: network effects — value rises as more adopt.</li>
+<li>Say it explicitly: the winner can be the one that <strong>got there first</strong>, not the best.</li>
+<li>Hold this for QWERTY, AC/DC, and Arthur’s lock-in.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><strong>Supply-side</strong></p>
+<ul>
+<li>Learning by doing → lower costs</li>
+<li>Knowledge spillovers → complementary innovations</li>
+<li>Cumulative discovery</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<p><strong>Demand-side</strong></p>
+<ul>
+<li>Network externalities (more users → more value)</li>
+<li>Bandwagon effects</li>
+<li>Coordination / standardisation</li>
+</ul>
+</div></div>
+<p><strong>Consequence:</strong> technologies can dominate not because they are best, but because they got there first or had better early support.</p>
+</section></section>
+<section>
+<section id="a-framework-nelson-et-al.-2004" class="title-slide slide level1 center">
+<h1>A framework: Nelson et al.&nbsp;(2004)</h1>
+
+</section>
+<section id="from-theory-to-framework" class="slide level2">
+<h2>From theory to framework</h2>
+<aside class="notes">
+<ul>
+<li>Rogers and Dosi <em>described</em>; Nelson, Peterhansl &amp; Sampat (2004) ask: can we <strong>systematise</strong> <em>why</em> innovations diffuse so differently?</li>
+<li>Their answer = two yes/no questions → a 2×2. Set them up here.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>We have seen Rogers (characteristics of innovations) and Dosi (path-dependence, increasing returns).</p>
+<p><strong>Nelson et al.&nbsp;(2004) ask:</strong> can we build a systematic framework that explains <em>why</em> different innovations diffuse in fundamentally different ways?</p>
+<p>Two dimensions:</p>
+<ol type="1">
+<li>Can we get clear evidence about whether the innovation works?</li>
+<li>Do dynamic increasing returns reinforce early adoption?</li>
+</ol>
+</section>
+<section id="differing-views-on-what-drives-adoption" class="slide level2">
+<h2>Differing views on what drives adoption</h2>
+<aside class="notes">
+<ul>
+<li>Three disciplines read adoption differently: economists (profit), historians (objective technical criteria), sociologists (socially-constructed criteria).</li>
+<li>Nelson et al.&nbsp;deliberately study cases that <em>do</em> have objective performance criteria — so the live debate is <strong>how clear the evidence really is</strong> (the first axis).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Adoption of novelty covers many processes — religious practices, dress fashions, medical treatments, farming practices, business methods.</p>
+<ul>
+<li><strong>Economists:</strong> profitability</li>
+<li><strong>Historians:</strong> objective technological criteria shared by potential adopters</li>
+<li><strong>Sociologists:</strong> socially constructed criteria, part of the process of acceptance or rejection</li>
+</ul>
+</section>
+<section id="nelson-et-al.-2004s-two-dimensions" class="slide level2">
+<h2>Nelson et al.&nbsp;(2004)’s two dimensions</h2>
+<aside class="notes">
+<ul>
+<li>The two axes. <strong>Persuasive feedback</strong>: can we generate clear, widely-convincing evidence it works? <strong>Dynamic increasing returns</strong>: does adoption reinforce itself?</li>
+<li>Crossing the two yes/no answers gives the four models (next slide).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<ul>
+<li><strong>Persuasive feedback</strong> — the extent to which it is possible to generate clear, widely persuasive evidence on whether an innovation works (experiments; sharp feedback in use).</li>
+<li><strong>Dynamic increasing returns</strong> — widespread adoption enhances the value of adoption for those who have not adopted yet: network effects, complementary activities, norms and expectations.</li>
+</ul>
+</section>
+<section id="nelson-et-al.-2004s-quadrant" class="slide level2">
+<h2>Nelson et al.&nbsp;(2004)’s quadrant</h2>
+<aside class="notes">
+<ul>
+<li>The 2×2: <strong>I</strong> rational choice (strong feedback, weak IR); <strong>II</strong> quasi-rational / lock-in (strong, strong); <strong>III</strong> social construction (weak, strong); <strong>IV</strong> fad (weak, weak).</li>
+<li>Tell them we’ll place real cases into these boxes via the poll — and some land in <strong>two</strong> boxes.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<svg class="diagram" viewbox="0 0 620 430" xmlns="http://www.w3.org/2000/svg" style="max-height:480px">
+<rect x="130" y="20" width="420" height="330" fill="none" stroke="#003C6E" stroke-width="2"></rect> <line x1="340" y1="20" x2="340" y2="350" stroke="#003C6E" stroke-width="1.5"></line> <line x1="130" y1="185" x2="550" y2="185" stroke="#003C6E" stroke-width="1.5"></line> <g text-anchor="middle"> <text x="235" y="95" font-weight="bold" font-size="22" fill="#003C6E">Model I</text> <text x="235" y="120" font-size="15">Rational choice</text> <text x="445" y="95" font-weight="bold" font-size="22" fill="#003C6E">Model II</text> <text x="445" y="120" font-size="15">Quasi-rational, lock-in</text> <text x="235" y="260" font-weight="bold" font-size="22" fill="#003C6E">Model IV</text> <text x="235" y="285" font-size="15">Fad / fashion</text> <text x="445" y="260" font-weight="bold" font-size="22" fill="#003C6E">Model III</text> <text x="445" y="285" font-size="15">Social construction</text> </g> <text x="105" y="105" text-anchor="middle" font-size="15" transform="rotate(-90 105 105)">Strong</text> <text x="105" y="270" text-anchor="middle" font-size="15" transform="rotate(-90 105 270)">Weak</text> <text x="70" y="185" text-anchor="middle" font-size="16" font-weight="bold" transform="rotate(-90 70 185)">Persuasive feedback</text> <text x="235" y="378" text-anchor="middle" font-size="15">Weak</text> <text x="445" y="378" text-anchor="middle" font-size="15">Strong</text> <text x="340" y="408" text-anchor="middle" font-size="16" font-weight="bold">Dynamic increasing returns</text>
+</svg>
+</section>
+<section id="lets-play-classify-the-innovations" class="slide level2" data-background-color="#f5f7fa">
+<h2>Let’s play: classify the innovations</h2>
+<aside class="notes">
+<ul>
+<li>Get everyone logged in (QR / URL, username = first name). Explain scoring in one breath.</li>
+<li><strong>Stress: a case can fit more than one model</strong> — select all that apply.</li>
+<li>Mechanics: you (admin) <strong>open</strong> each question when you reach the matching case, students vote, then you <strong>close</strong> it before moving on (closing applies the 30 s penalty). Leaderboard updates live.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:62%;">
+<p><strong>How to play</strong></p>
+<ol type="1">
+<li><strong>Log in</strong> with your username (your first name)</li>
+<li><strong>Wait for the question</strong> — it opens when I open it</li>
+<li><strong>Answer quickly</strong> — select the correct option(s); <em>a case can fit more than one model</em></li>
+<li><strong>Change your mind</strong> freely while the question is open</li>
+</ol>
+<p><strong>Scoring</strong></p>
+<ul>
+<li><span style="color:#008250"><strong>Correct time</strong></span> — time spent with <strong>all and only</strong> the correct answers selected</li>
+<li><span style="color:#be2828"><strong>Penalty</strong></span> — 30 s for a wrong <em>final</em> answer</li>
+<li><span style="color:#005AA0"><strong>Elite score</strong></span> — correct time − penalties</li>
+</ul>
+</div><div class="column" style="width:38%;">
+<div class="access-box">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="images/qr_pool.png" class="quarto-figure quarto-figure-center" style="width:68.0%"></p>
+</figure>
+</div>
+<p><strong>Access the platform</strong></p>
+<p>Pool: <strong>Technology diffusion models</strong></p>
+<p>Username: <strong>your first name</strong></p>
+<p><a href="https://acuz.github.io/tech-diffusion-course/quiz.html">acuz.github.io/tech-diffusion-course/quiz.html</a></p>
+</div>
+</div></div>
+</section></section>
+<section>
+<section id="case-studies" class="title-slide slide level1 center" data-background-color="#003C6E">
+<h1>Case studies</h1>
+<div style="color:white">
+<p>For each technology: look, <strong>vote in the pool</strong> which of the four models it fits — then we recap, with the live leaderboard alongside.</p>
+</div>
+<aside class="notes">
+<ul>
+<li>The rhythm for every case: <strong>image → open the question → they vote → recap with the leaderboard</strong>.</li>
+<li>Push them to argue <em>which</em> model and <em>why</em> — and to notice when more than one applies.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="hybrid-corn-1920s1940s" class="slide level2">
+<h2>Hybrid corn (1920s–1940s)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q1.</strong> While they vote: corn = the top US agricultural commodity (mostly feed); hybrid seed becomes commercial in the <strong>late 1920s</strong> and rapidly dominant. Two classic studies: Ryan &amp; Gross (1943, sociologists) and Griliches (1957, economist).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/hybrid_corn_vs_pollinated.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="hybrid-corn-discussion" class="slide level2 smaller">
+<h2>Hybrid corn — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: I + III.</strong></li>
+<li><strong>Model I:</strong> profitable (Griliches focuses on profitability <em>per se</em>; Ryan &amp; Gross frame it as “good farm practice”). Strong information: experiment stations, government bulletins + private journals, formal <strong>seed certification</strong>, “corn contests”, and <strong>neighbour imitation</strong> (Griliches models this as “contagion”). Farmers also <strong>self-experimented</strong> — planting part of their fields first. <em>“So far, a textbook Model I.”</em></li>
+<li><strong>Twist → III</strong> (three complications): (i) hybrids only pay off with <strong>complementary practices</strong> → hard to separate the hybrid gain from better-farming gains; (ii) <strong>dynamic increasing returns</strong> — federal research <em>focused</em> on hybrids, self-reinforcing vs the open-pollinated route; (iii) <strong>commercial interest</strong> — hybrids don’t breed true → buy seed yearly → a big seed market.</li>
+<li>Berlan &amp; Lewontin (1986) / Kloppenburg (1988): a station–seed-company <strong>coalition</strong>; efficacy never cleanly established.</li>
+<li><strong>Punchline:</strong> same facts — I vs III turns on <em>how clear you think the evidence was</em> and <em>how much weight you give increasing returns + interests</em>.</li>
+<li><strong>Transition →</strong> landing gear, where the evidence really is unambiguous.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model I</strong> (rational choice), with elements of <strong>Model III</strong>.</p>
+<ul>
+<li>Late 1920s: a <strong>radical innovation</strong> for feed; hybrid seed gave markedly higher yields</li>
+<li><strong>Rapid adoption</strong> driven by clear, measurable profitability — the textbook rational case</li>
+<li>Channels: government <strong>experiment stations</strong>, farm bulletins, seed-certification programmes, “corn contests”, and <strong>neighbouring farmers</strong> (local imitation)</li>
+<li>Griliches (1957): differences in diffusion <em>speed</em> across US states tracked <strong>expected profitability</strong> (market size, seed-firm entry)</li>
+<li>Pulls toward Model III: needs <strong>complementary</strong> practices; <strong>dynamic increasing returns</strong> (hybrids reinforced further R&amp;D); hybrids don’t breed true → farmers must <strong>buy seed every year</strong></li>
+<li>Berlan &amp; Lewontin / Kloppenburg: partly a <strong>social construction</strong> by seed firms, who favoured hybrids over open-pollinated improvement</li>
+</ul>
+<p><em>Ryan &amp; Gross (1943); Griliches (1957); Berlan &amp; Lewontin (1986); Kloppenburg (1988).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="aircraft-retractable-landing-gear-1930s1940s" class="slide level2">
+<h2>Aircraft retractable landing gear (1930s–1940s)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q2.</strong> Setup: pre-1930 all aircraft had fixed gear; by ~1949 all high-performance aircraft had retractable gear. Vincenti (1994) tells the story.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/retractable_vs_fixed_landing_gear.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="landing-gear-discussion" class="slide level2 smaller">
+<h2>Landing gear — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: I.</strong> The clean rational-choice case.</li>
+<li>Trigger: more powerful engines → speeds <strong>&gt;200 mph</strong>, where drag dominates the weight/complexity penalty.</li>
+<li>Measurable trade-offs (drag vs weight/reliability/maintenance); an interim <strong>“spatted” fixed gear</strong> bought time while retraction matured; as speeds rose and reliability was solved, retractable <strong>decisively won</strong>.</li>
+<li><strong>Feedback is strong and quantitative</strong> → no ambiguity, no lock-in. Explicit contrast with hybrid corn’s <em>contested</em> evidence.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model I</strong> (rational-choice diffusion) — strong, quantitative feedback.</p>
+<ul>
+<li>Pre-1930 essentially all aircraft had <strong>fixed</strong> gear; by ~1949 all high-performance aircraft had <strong>retractable</strong> gear</li>
+<li>Trigger: more powerful engines → speeds <strong>&gt;200 mph</strong>, where <strong>drag</strong> dominates the weight/complexity penalty</li>
+<li>Competing criteria: low drag (retractable) vs lower weight, reliability, simpler maintenance (fixed, early on)</li>
+<li>Intermediate step: streamlined <strong>“spatted”/trousered</strong> fixed gear bought time while retraction mechanisms matured</li>
+<li>As speeds rose and reliability improved, <strong>drag savings decisively won</strong> → near-universal adoption</li>
+<li>Performance was <strong>measurable</strong> → little ambiguity, no lock-in</li>
+</ul>
+<p><em>Vincenti (1994).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="polio-vaccines-1950s1960s" class="slide level2">
+<h2>Polio vaccines (1950s–1960s)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q3.</strong> Setup: 1949 three poliovirus serotypes identified; the Salk vs Sabin race begins.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/polyo_vaccines.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="polio-vaccines-discussion" class="slide level2 smaller">
+<h2>Polio vaccines — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: I</strong>, with rapid technology switching.</li>
+<li>Salk (killed, injected, fast to field) vs Sabin (live attenuated, oral, longer immunity). 1954 <strong>1.8M-child trial</strong> → 1955 dramatic results → <strong>immediate licensing</strong>.</li>
+<li>Then <strong>switch Salk → Sabin</strong> once oral advantages were clear → <strong>low switching costs, no lock-in</strong>. ~90% case reduction by 1961.</li>
+<li>Strong, public, fast feedback → rational adoption. (Same medical domain as mammography — opposite model: keep that contrast for the next case.)</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model I</strong> (rational choice) with rapid technology switching.</p>
+<ul>
+<li>1949: three poliovirus serotypes identified → vaccine development becomes feasible</li>
+<li>Two designs competed: <strong>Salk</strong> (killed, injected; faster to field, immunity duration uncertain) vs <strong>Sabin</strong> (live attenuated, oral; slower to develop, longer/passive immunity)</li>
+<li>1954: a <strong>huge field trial</strong> (~1.8M “Polio Pioneers”); 1955 results → <strong>dramatic case reduction</strong> → immediate licensing</li>
+<li>Strong, public persuasive feedback (visible disease, clear endpoints) → fast, rational adoption</li>
+<li>1961–63: switch <strong>Salk → Sabin</strong> once oral advantages were clear → <strong>low switching costs</strong>, no lock-in</li>
+<li>Impact: ~<strong>90% reduction</strong> in incidence by 1961</li>
+</ul>
+<p><em>Robbins (1999); Salk et al.&nbsp;(1994); Blume &amp; Geesink (2000).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="screening-mammography-1960spresent" class="slide level2">
+<h2>Screening mammography (1960s–present)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q4.</strong> This is the <em>contested</em> medical case — setup: 1960s screening of asymptomatic women; 1963 HIP study.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/screening_mammography.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="screening-mammography-discussion" class="slide level2 smaller">
+<h2>Screening mammography — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: III</strong> — the surprise (an “objective” medical technology, yet socially constructed).</li>
+<li>Evidence stayed <strong>contested for decades</strong>: over-diagnosis/over-treatment, radiation, lead-time and length <strong>biases</strong>; worst for women <strong>under 50</strong>.</li>
+<li>Social construction: “war on cancer” metaphors, gender/power, cultural assumptions. <strong>1997 Senate 98–0</strong> against a cautious panel; <strong>1999</strong> Swedish study finds no clear benefit.</li>
+<li>Lesson: <strong>same data, persistent disagreement = weak persuasive feedback.</strong> Powerful contrast with polio (same domain, Model I).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model III</strong> (social construction) — despite seemingly objective criteria.</p>
+<ul>
+<li>1930s: X-rays for diagnosis; 1960s: <strong>screening of asymptomatic women</strong> on the early-detection theory</li>
+<li>1963 <strong>HIP study</strong> (~62,000 women) suggested a mortality reduction — but evidence stayed <strong>contested for decades</strong></li>
+<li>Genuine ambiguity: <strong>over-diagnosis / over-treatment</strong> of non-lethal cancers, radiation exposure, lead-time and length <strong>biases</strong>; sharpest disagreement for women <strong>under 50</strong></li>
+<li>Social-construction elements: <strong>military metaphors</strong> (“war on cancer”), gender and power relations, cultural assumptions about women’s responsibility for health</li>
+<li>Politics over evidence: <strong>1997 US Senate votes 98–0</strong> against a cautious consensus panel; <strong>1999</strong> Swedish re-analysis finds no clear benefit</li>
+<li>Same data, <strong>persistently different conclusions</strong> → weak persuasive feedback</li>
+</ul>
+<p><em>Lerner (1998, 2001); Fletcher (1997); Olsen &amp; Gotzsche (2001).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="m-form-organisation-1920s1970s" class="slide level2">
+<h2>M-form organisation (1920s–1970s)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q5.</strong> Setup: large diversified firms overwhelm central management → the multidivisional (M-form) structure as the fix.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/M_form.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="m-form-discussion" class="slide level2 smaller">
+<h2>M-form — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: I + III.</strong></li>
+<li>Rational: a real coordination problem with a logical fix; adoption <strong>2% → 84%</strong> (1919–79); pushed by McKinsey, journals, business schools.</li>
+<li>Social construction: a <strong>“fuzzy concept”</strong>, many bastardised versions, you <strong>can’t isolate</strong> its profit effect, and adoption was partly <strong>mimetic</strong>.</li>
+<li>Same shape as hybrid corn: plausible logic <strong>+</strong> hard-to-measure efficacy → genuinely contested between I and III.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model I</strong> (rational choice) with strong elements of <strong>Model III</strong>.</p>
+<ul>
+<li>Problem: large <strong>diversified</strong> firms overwhelmed central management → solution = decentralise into semi-autonomous <strong>product/market divisions</strong>; HQ does strategy + capital allocation</li>
+<li>Adoption among the largest US firms: <strong>~2% (1919) → ~84% (1979)</strong></li>
+<li>Rational case: a coherent answer to a real coordination problem; promoted by <strong>McKinsey</strong>, management journals, business schools</li>
+<li>Social-construction case: a <strong>“fuzzy concept”</strong>, hard to define; many <strong>“mixed/bastardised”</strong> versions adopted</li>
+<li>Hard to <strong>isolate M-form’s effect</strong> on profitability → weak persuasive feedback</li>
+<li><strong>Mimetic</strong> adoption: pressure to conform to what leading firms and consultants endorse</li>
+</ul>
+<p><em>Chandler (1962); Williamson (1975); Fligstein (1985); DiMaggio &amp; Powell (1983).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="qwerty-vs-dvorak-keyboards" class="slide level2">
+<h2>QWERTY vs DVORAK keyboards</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q6.</strong> The canonical lock-in / path-dependence case — let them recall the increasing-returns slide.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/qwerty_vs_dvorak.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="qwerty-vs-dvorak-discussion" class="slide level2 smaller">
+<h2>QWERTY vs DVORAK — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: II.</strong> QWERTY was designed to stop typebar jams (a constraint long gone); Dvorak is faster, yet QWERTY wins.</li>
+<li>Lock-in mechanisms = the demand-side increasing returns from two slides ago: network effects, switching costs, complementary assets.</li>
+<li>David (1985) = inefficient lock-in; Liebowitz &amp; Margolis (1990) dispute <em>how</em> inefficient. The teaching point is the <strong>mechanism</strong> (self-reinforcement), independent of the magnitude debate.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model II</strong> (quasi-rational, lock-in) — the canonical path-dependence case.</p>
+<ul>
+<li>QWERTY (1870s) arranged keys to reduce <strong>typebar jams</strong> on mechanical typewriters — a constraint long obsolete</li>
+<li>DVORAK (1930s) designed for typing <strong>speed/efficiency</strong>; yet QWERTY still dominates</li>
+<li>Lock-in mechanisms: <strong>network effects</strong> (shared standard), <strong>switching costs</strong> (retraining typists), <strong>complementary assets</strong> (typing schools, textbooks), self-reinforcement (more users → more support → more users)</li>
+<li>David (1985): a classic example of <strong>inefficient lock-in</strong> — history, not merit, selected the standard</li>
+<li>Liebowitz &amp; Margolis (1990), <em>“The Fable of the Keys”</em>: dispute DVORAK’s measured superiority → <em>how</em> inefficient the lock-in really is remains debated</li>
+</ul>
+<p><em>David (1985), AER; Liebowitz &amp; Margolis (1990), JLE.</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="quality-circles-1980s" class="slide level2">
+<h2>Quality circles (1980s)</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q7.</strong> The fad case — 1980s US firms importing Japanese management practices.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/quality_circles.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="quality-circles-discussion" class="slide level2 smaller">
+<h2>Quality circles — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: IV (+ III).</strong></li>
+<li>Many articles, vivid cases, but <strong>weak statistics</strong>; heavy consultant advocacy; ill-defined.</li>
+<li>Fad signature: <strong>fragile</strong> consensus, <strong>no increasing returns</strong>, <strong>sharp decline</strong> after the mid-1980s.</li>
+<li>The clincher: it lacked <strong>both</strong> anchors of durable diffusion — sharp performance evidence <em>and</em> increasing returns. Contrast with QWERTY (also weak evidence, but real increasing returns → it persists).</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model IV</strong> (fad / fashion), with <strong>Model III</strong> features.</p>
+<ul>
+<li>Early-mid 1980s: Japanese firms outcompete US firms → US firms import Japanese practices — small worker groups meeting to improve quality</li>
+<li>A loose umbrella of practices labelled “quality circles”</li>
+<li>Social construction: a <strong>surge of articles</strong>, vivid case stories, but <strong>unconvincing statistics</strong>; heavy advocacy by researchers and <strong>consultants</strong>; hard to define or measure effects</li>
+<li>Fad signature: <strong>fragile</strong> expert consensus and <strong>no strong increasing returns</strong> to adoption</li>
+<li><strong>Sharp decline</strong> in articles — and in firms keeping the structures — after the mid-1980s</li>
+<li>Missing the two anchors of durable diffusion: <strong>sharp performance evidence</strong> <em>and</em> increasing returns</li>
+</ul>
+<p><em>Meyer &amp; Rowan (1977); Abrahamson (1996); Abrahamson &amp; Fairchild (1997).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="ac-vs-dc-electrical-systems" class="slide level2">
+<h2>AC vs DC electrical systems</h2>
+<aside class="notes">
+<ul>
+<li><strong>Open Q8.</strong> The second lock-in case — the 1880s “War of Currents”.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<img data-src="images/ac_vs_dc.png" class="r-stretch">
+<div class="vote-cue" style="text-align:center">
+<p>📱 <strong>Vote in the pool</strong> — which of the four models?</p>
+</div>
+</section>
+<section id="ac-vs-dc-discussion" class="slide level2 smaller">
+<h2>AC vs DC — discussion</h2>
+<aside class="notes">
+<ul>
+<li><strong>Keyed answer: II.</strong> DC (Edison) vs AC (Westinghouse/Tesla). AC wins on <strong>long-distance transmission</strong> (voltage transformation).</li>
+<li>Tipping event: <strong>Niagara Falls, 1895</strong> → standardisation + increasing returns → AC becomes the universal grid standard.</li>
+<li><strong>Irony to leave them with:</strong> digital devices and renewables are DC, and <strong>HVDC</strong> now carries the longest links — the “loser” returns where its physics wins. Lock-in isn’t always permanent.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div class="columns">
+<div class="column" style="width:60%;">
+<p><strong>Model II</strong> (quasi-rational, lock-in).</p>
+<ul>
+<li>1880s <strong>“War of Currents”</strong>: Edison (<strong>DC</strong>) vs Westinghouse/Tesla (<strong>AC</strong>)</li>
+<li>Trade-offs: DC safer at low voltage, simpler, battery-friendly; AC allows <strong>voltage transformation</strong> → efficient <strong>long-distance</strong> transmission</li>
+<li>Tipping event: AC chosen for the <strong>Niagara Falls</strong> plant (1895) → momentum</li>
+<li>Lock-in: <strong>standardisation</strong> of equipment/infrastructure; increasing returns (more AC → more AC kit → lower costs) → AC becomes the universal grid standard</li>
+<li><strong>Modern irony</strong>: digital devices and much renewable generation are <strong>DC</strong>; <strong>HVDC</strong> now carries very-long-distance links — the “loser” returns where its physics wins</li>
+</ul>
+<p><em>David (1985); Hughes (1983), “Networks of Power”; McNichol (2006).</em></p>
+</div><div class="column" style="width:40%;">
+<iframe class="lbframe" data-src="leaderboard.html">
+</iframe>
+</div></div>
+</section>
+<section id="assigning-innovations-to-the-four-models" class="slide level2">
+<h2>Assigning innovations to the four models</h2>
+<aside class="notes">
+<ul>
+<li>Recap the filled grid; the <strong>two axes</strong> explain every placement.</li>
+<li>Highlight that several cases sit in <strong>two boxes</strong> (hybrid corn, M-form, quality circles) — diffusion is rarely “pure”.</li>
+<li>Bridge to Part II: <em>“now let’s formalise the dynamics behind these S-curves and lock-ins.”</em></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<svg class="diagram" viewbox="0 0 760 430" xmlns="http://www.w3.org/2000/svg" style="max-height:500px">
+<rect x="150" y="15" width="520" height="350" fill="none" stroke="#003C6E" stroke-width="2"></rect> <line x1="410" y1="15" x2="410" y2="365" stroke="#003C6E" stroke-width="1.5"></line> <line x1="150" y1="190" x2="670" y2="190" stroke="#003C6E" stroke-width="1.5"></line> <g font-size="13" fill="#222"> <text x="165" y="40" font-weight="bold" font-size="17" fill="#003C6E">Model I</text> <text x="165" y="62">Hybrid corn (late 1920s)</text> <text x="165" y="82">Retractable landing gear</text> <text x="165" y="102">Polio vaccines (1950s)</text> <text x="165" y="122">M-form firm (early 1900s)</text> <text x="425" y="40" font-weight="bold" font-size="17" fill="#003C6E">Model II</text> <text x="425" y="62">QWERTY vs DVORAK</text> <text x="425" y="82">AC vs DC systems</text> <text x="165" y="215" font-weight="bold" font-size="17" fill="#003C6E">Model IV</text> <text x="165" y="237">Quality circles (mid 1980s)</text> <text x="425" y="215" font-weight="bold" font-size="17" fill="#003C6E">Model III</text> <text x="425" y="237">Hybrid corn (late 1920s)</text> <text x="425" y="257">Screening mammography</text> <text x="425" y="277">Quality circles (mid 1980s)</text> <text x="425" y="297">M-form firm (early 1900s)</text> </g> <text x="125" y="105" text-anchor="middle" font-size="14" transform="rotate(-90 125 105)">Strong</text> <text x="125" y="280" text-anchor="middle" font-size="14" transform="rotate(-90 125 280)">Weak</text> <text x="95" y="190" text-anchor="middle" font-size="15" font-weight="bold" transform="rotate(-90 95 190)">Persuasive feedback</text> <text x="280" y="392" text-anchor="middle" font-size="14">Weak</text> <text x="540" y="392" text-anchor="middle" font-size="14">Strong</text> <text x="410" y="420" text-anchor="middle" font-size="15" font-weight="bold">Dynamic increasing returns</text>
+</svg>
+</section></section>
+<section>
+<section id="part-ii-formal-models-and-modern-evidence" class="title-slide slide level1 center">
+<h1>Part II — Formal models and modern evidence</h1>
+
+</section>
+<section id="mansfield-1961-a-successful-innovation" class="slide level2">
+<h2>Mansfield (1961): a successful innovation</h2>
+<aside class="notes">
+<ul>
+<li>Pivot to formal models. Mansfield’s question: not <em>whether</em> a profitable innovation spreads, but <em>how fast</em> — and what sets the speed.</li>
+<li>12 innovations, 4 sectors; a <strong>deterministic</strong> model → the S-curve. Two forces: <strong>natural rate</strong> + <strong>imitation</strong>. Connects directly to the S-curve slide.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<blockquote>
+<p>“Once an innovation is introduced by one firm, how soon do others in the industry come to use it? What factors determine how rapidly they follow?” — Mansfield (1961)</p>
+</blockquote>
+<ul>
+<li><strong>The question:</strong> not <em>whether</em> a profitable innovation spreads, but <em>how fast</em> — and what sets the speed</li>
+<li>Evidence: <strong>12 innovations</strong> across <strong>four sectors</strong> (iron &amp; steel, railroads, brewing, bituminous coal)</li>
+<li>A <strong>deterministic</strong> model of progressive adoption that generates the logistic (S-)curve</li>
+<li>Two forces: a <strong>natural rate</strong> (profitability, cost) + an <strong>imitation effect</strong> (more adopters → faster adoption)</li>
+</ul>
+</section>
+<section id="what-the-data-show-13" class="slide level2 smaller">
+<h2>What the data show (1/3)</h2>
+<aside class="notes">
+<ul>
+<li>His <strong>actual diffusion curves</strong>. Point: different innovations diffuse at different speeds; more profitable = faster; all S-shaped. These are what the model must reproduce.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Innovations: by-product coke oven, diesel locomotive, tin container, shuttle car (iron &amp; steel, railroads, brewing, coal).</p>
+
+<img data-src="images/Mansfield_example_1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> different innovations diffuse at <strong>different speeds</strong>; more <strong>profitable</strong> ones diffuse faster; all trace the same <strong>S-shape</strong>.</p>
+</section>
+<section id="what-the-data-show-23" class="slide level2 smaller">
+<h2>What the data show (2/3)</h2>
+<aside class="notes">
+<ul>
+<li>Same S-shape across very different industries → a <strong>general regularity</strong>, not a sector quirk.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Innovations: car retarder, trackless mobile loader, continuous mining machine, pallet-loading machine.</p>
+
+<img data-src="images/Mansfield_example_2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> the same S-shape recurs across very different industries — diffusion is a <strong>general pattern</strong>, not a quirk of one sector.</p>
+</section>
+<section id="what-the-data-show-33" class="slide level2 smaller">
+<h2>What the data show (3/3)</h2>
+<aside class="notes">
+<ul>
+<li>Slopes differ, all monotone and saturating. Tee up the question: <em>“what simple mechanism produces this?”</em></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Innovations: continuous wide-strip mill, centralized traffic control, continuous annealing, high-speed bottle filler.</p>
+
+<img data-src="images/Mansfield_example_3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> slopes vary, but the curves are <strong>monotone and saturating</strong> — the regularity Mansfield’s model is built to reproduce.</p>
+</section>
+<section id="the-logistic-model-the-core-idea" class="slide level2">
+<h2>The logistic model: the core idea</h2>
+<aside class="notes">
+<ul>
+<li>The intuition <em>before</em> the maths. Adoption rate = <strong>natural rate</strong> (attractiveness) + <strong>imitation</strong> (more adopters → faster).</li>
+<li>Imitation is what bends the curve into an <strong>S</strong>. Tell them the next three slides just formalise this one sentence.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>The rate of adoption depends on two factors:</p>
+<ol type="1">
+<li><strong>Natural rate</strong> — how profitable / attractive is the innovation?</li>
+<li><strong>Imitation effect</strong> — how does seeing others adopt influence your decision?</li>
+</ol>
+<p><strong>Key insight:</strong> the more firms have already adopted, the faster the rest adopt (information spreads, uncertainty falls) — generating the S-curve.</p>
+</section>
+<section id="structure-of-the-model" class="slide level2">
+<h2>Structure of the model</h2>
+<aside class="notes">
+<ul>
+<li>Board-friendly. <span class="math inline">\(n\)</span> potential adopters, <span class="math inline">\(x\)</span> = fraction adopted. New adopters in <span class="math inline">\(\delta\)</span> are proportional to rate <span class="math inline">\(\lambda\)</span> × the remaining <span class="math inline">\((1-x)\)</span>. Let <span class="math inline">\(\delta\to 0\)</span> → <span class="math inline">\(\dot x = \lambda(1-x)\)</span>.</li>
+<li>Optionally derive this on the board — it’s one line.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Time is continuous; <span class="math inline">\(n\)</span> potential adopters, <span class="math inline">\(n(t)\le n\)</span> already adopted.</p>
+<p>Adopters in a small interval <span class="math inline">\(\delta\)</span>: <span class="math display">\[ n(t+\delta)-n(t)=\lambda(t)\,(n-n(t))\,\delta. \]</span></p>
+<p>With <span class="math inline">\(x(t)=n(t)/n\)</span> and <span class="math inline">\(\delta\to 0\)</span>: <span class="math display">\[ \dot{x}(t)=\lambda(t)\,(1-x(t)). \]</span></p>
+</section>
+<section id="the-adoption-rate" class="slide level2">
+<h2>The adoption rate</h2>
+<aside class="notes">
+<ul>
+<li>Let <span class="math inline">\(\lambda\)</span> depend on profit, cost and current adoption <span class="math inline">\(x\)</span>; collapse to <span class="math inline">\(\lambda=\lambda_0+\lambda_1 x\)</span>.</li>
+<li><span class="math inline">\(\lambda_0\)</span> = natural rate (profit, cost); <span class="math inline">\(\lambda_1\)</span> = imitation / increasing-returns term. <strong><span class="math inline">\(\lambda_1&gt;0\)</span> = dynamic increasing returns</strong> — tie back to the framework’s second axis.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p><span class="math display">\[ \lambda(t)=a_1+a_2 x+a_3\pi+a_4 c+a_5 x\pi+a_6 x c+\dots \]</span></p>
+<p>Rewrite <span class="math inline">\(\lambda(t)=\lambda_0+\lambda_1 x(t)\)</span>:</p>
+<ul>
+<li><span class="math inline">\(\lambda_0=a_1+a_3\pi+a_4 c\)</span> — natural rate of adoption</li>
+<li><span class="math inline">\(\lambda_1=a_2+a_5\pi+a_6 c\)</span> — effect of previous adopters (<span class="math inline">\(\lambda_1&gt;0\Rightarrow\)</span> dynamic increasing returns)</li>
+</ul>
+</section>
+<section id="solving-the-model" class="slide level2">
+<h2>Solving the model</h2>
+<aside class="notes">
+<ul>
+<li>Don’t grind the algebra live — say it’s a <strong>logistic / Bernoulli ODE</strong> with a closed-form solution, and point at the <em>shape</em>.</li>
+<li>The simplified <span class="math inline">\(t_0=0,\,x_0=0\)</span> form is the clean S-curve. Offer to derive it on the board for the keen.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p><span class="math display">\[ \dot{x}(t)=(\lambda_0+\lambda_1 x)(1-x). \]</span></p>
+<p>With <span class="math inline">\(x(t_0)=x_0\)</span>: <span class="math display">\[ x(t)=\frac{(\lambda_0+\lambda_1 x_0)e^{(\lambda_0+\lambda_1)(t-t_0)}-\lambda_0(1-x_0)}
+            {(\lambda_0+\lambda_1 x_0)e^{(\lambda_0+\lambda_1)(t-t_0)}+\lambda_1(1-x_0)}. \]</span></p>
+<p>For <span class="math inline">\(t_0=0,\;x_0=0\;(\lambda_0\neq 0)\)</span>: <span class="math display">\[ x(t)=\frac{e^{(\lambda_0+\lambda_1)t}-1}{e^{(\lambda_0+\lambda_1)t}+\lambda_1/\lambda_0}. \]</span></p>
+</section>
+<section id="observations" class="slide level2">
+<h2>Observations</h2>
+<aside class="notes">
+<ul>
+<li>Read the limits aloud: <span class="math inline">\(\lambda_0+\lambda_1&gt;0 \Rightarrow x\to 1\)</span> (full diffusion); <span class="math inline">\(&lt;0 \Rightarrow\)</span> partial (<span class="math inline">\(x\to -\lambda_0/\lambda_1\)</span>). <span class="math inline">\(\lambda_0=0\)</span> is the pure logistic.</li>
+<li>Mansfield’s estimates <span class="math inline">\(\lambda_1\in(0.2,0.5)\)</span>, one outlier <span class="math inline">\(2.4\)</span> → imitation matters, magnitudes modest. This is the slide to launch the <strong>Shiny app</strong> from.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<ul>
+<li>The <em>logistic</em> case is <span class="math inline">\(\lambda_0=0\)</span> (needs <span class="math inline">\(x_0&gt;0\)</span>).</li>
+<li>If <span class="math inline">\(\lambda_0+\lambda_1&gt;0\)</span>: <span class="math inline">\(x\to 1\)</span>. If <span class="math inline">\(\lambda_0+\lambda_1&lt;0\)</span>: <span class="math inline">\(x\to -\lambda_0/\lambda_1&gt;0\)</span>.</li>
+<li>Mansfield’s estimates: <span class="math inline">\(\lambda_1\in(0.2,0.5)\)</span>, with one case <span class="math inline">\(\lambda_1=2.4\)</span>.</li>
+</ul>
+</section>
+<section id="mansfields-findings" class="slide level2 smaller">
+<h2>Mansfield’s findings</h2>
+<aside class="notes">
+<ul>
+<li>Faster when more profitable, cheaper, stronger imitation. Imitation parameter 0.2–2.4.</li>
+<li><strong>Key limitation (the bridge):</strong> the model <em>assumes everyone eventually adopts</em> → it can’t explain <strong>failure</strong> or <strong>competition between technologies</strong>. That’s exactly what Arthur adds next.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Faster diffusion when: higher profitability (stronger advantage); lower costs; stronger imitation effects.</p>
+<p>The imitation parameter ranged from <strong>0.2 to 2.4</strong> — higher values mean faster acceleration once adoption begins.</p>
+<p><strong>Key limitation:</strong> the model assumes everyone eventually adopts — it does not explain failed diffusion or competing technologies.</p>
+</section>
+<section id="interactive-the-logistic-model" class="slide level2" data-background-color="#f5f7fa">
+<h2>Interactive: the logistic model</h2>
+<aside class="notes">
+<ul>
+<li>Open the <strong>Shiny app → Mansfield tab</strong>. Move <span class="math inline">\(\lambda_0,\lambda_1,x_0\)</span> live: show a fast vs slow S-curve, then flip <span class="math inline">\(\lambda_0+\lambda_1&lt;0\)</span> for partial diffusion. Invite a student to pick the parameters.</li>
+<li>Free-tier app sleeps — <strong>open it ~1 min early</strong> so it’s awake.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<div style="font-size:0.62em">
+<p>Sliders for <span class="math inline">\(\lambda_0,\lambda_1,x_0\)</span> → watch <span class="math inline">\(x(t)\)</span>. <strong>Mansfield</strong> tab: a fast S-curve (<span class="math inline">\(\lambda_1=2.4\)</span>) vs a slow one (<span class="math inline">\(\lambda_1=0.2\)</span>); set <span class="math inline">\(\lambda_0+\lambda_1&lt;0\)</span> for partial diffusion (<span class="math inline">\(x\to-\lambda_0/\lambda_1\)</span>).</p>
+</div>
+<iframe class="appframe" data-src="https://acuz.shinyapps.io/tech-diffusion-models/">
+</iframe>
+</section>
+<section id="arthur-1989-when-technologies-compete" class="slide level2">
+<h2>Arthur (1989): when technologies compete</h2>
+<aside class="notes">
+<ul>
+<li>Mansfield = <strong>one</strong> technology, everyone adopts. Arthur changes the question to <strong>which of two</strong> competing technologies wins.</li>
+<li>The return to a technology <strong>rises with its own adoption</strong>; the outcome depends on <strong>increasing / decreasing / constant</strong> returns.</li>
+<li>This formalises the lock-in we saw in Part I (QWERTY, AC/DC). <em>(Notes end here — slide 46.)</em></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+<p>Two technologies; the return to a technology rises with its own adoption: <span class="math display">\[ \pi_A=a_A+r_A n_A,\qquad \pi_B=a_B+r_B n_B. \]</span></p>
+<p><strong>Questions:</strong> will one dominate or both coexist? Does the better technology always win? How do early choices matter?</p>
+<p><strong>Insight:</strong> the answer depends on <strong>increasing</strong>, <strong>decreasing</strong> or <strong>constant</strong> returns to adoption.</p>
+</section>
+<section id="structure-of-the-model-1" class="slide level2 smaller">
+<h2>Structure of the model</h2>
+<p>Time is discrete; two technologies <span class="math inline">\(i=1,2\)</span>. At each date a new agent picks the technology with the higher payoff <span class="math inline">\(\pi_i(t)\)</span>, which can depend on the number of adopters.</p>
+<p>Population share <span class="math inline">\(x_i(t)=n_i(t)/t\)</span> (a share over <em>choices made so far</em>, unlike Mansfield’s <span class="math inline">\(x=n(t)/n\)</span>).</p>
+<p>The process can be probabilistic; we study its dynamics under increasing, decreasing and constant returns.</p>
+</section>
+<section id="properties-of-the-adoption-process" class="slide level2 smaller">
+<h2>Properties of the adoption process</h2>
+<ul>
+<li><strong>Predictable</strong> — the observer can state ex-ante a path <span class="math inline">\(\hat{x}_i(t)\)</span> with <span class="math inline">\(|x_i-\hat{x}_i|\to 0\)</span> a.s.</li>
+<li><strong>Ergodic</strong> — the stochastic detail does not matter: two realisations converge.</li>
+<li><strong>Flexible</strong> — the subsidy needed to change long-run adoption is bounded.</li>
+<li><strong>Efficient</strong> — if <span class="math inline">\(\pi_i&gt;\pi_j\)</span> at <span class="math inline">\((z_i,z_j)\)</span> with <span class="math inline">\(z_i&gt;z_j\)</span>, then <span class="math inline">\(\pi_i&gt;\pi_j\)</span> also at <span class="math inline">\((z_i,z)\)</span> for all <span class="math inline">\(z\le z_i\)</span>.</li>
+</ul>
+</section>
+<section id="homogeneous-adopters" class="slide level2 smaller">
+<h2>Homogeneous adopters</h2>
+<p>Payoff <span class="math inline">\(\pi_i=a_i+r_i\,n_i(t-1)\)</span>.</p>
+<ul>
+<li><strong>Decreasing returns</strong> (<span class="math inline">\(r_1,r_2&lt;0\)</span>): shares settle; predictable, ergodic, efficient <strong>and flexible</strong> — the “well-behaved” case.</li>
+<li><strong>Increasing returns</strong> (<span class="math inline">\(r_1,r_2&gt;0\)</span>, learning by using): generally one technology dominates; predictable and ergodic but inflexible and possibly inefficient — a possible <strong>lock-in</strong>.</li>
+</ul>
+</section>
+<section id="homogeneous-adopters-the-two-regimes" class="slide level2">
+<h2>Homogeneous adopters: the two regimes</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="images/hom_adopt_decreasing_returns.png"></p>
+<p>Decreasing returns — shares settle.</p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="images/hom_adopters_incr_returns.png"></p>
+<p>Increasing returns — one technology takes over.</p>
+</div></div>
+</section>
+<section id="heterogeneous-adopters" class="slide level2 smaller">
+<h2>Heterogeneous adopters</h2>
+<p>Two agent types arrive at random; payoff <span class="math inline">\(\pi_i=a^j_i+r\,n_i(t-1)\)</span>, with <span class="math inline">\(a^1_1&gt;a^1_2\)</span>, <span class="math inline">\(a^2_1&lt;a^2_2\)</span>.</p>
+<p>Define <span class="math inline">\(d(t)=n_1(t)-n_2(t)\)</span>:</p>
+<ul>
+<li><span class="math inline">\(r=0\)</span> — <strong>random walk</strong> (no barriers)</li>
+<li><span class="math inline">\(r&lt;0\)</span> — <strong>reflecting barriers</strong> at <span class="math inline">\(d=(a^i_1-a^i_2)/(-r)\)</span> → stable coexistence</li>
+<li><span class="math inline">\(r&gt;0\)</span> — <strong>absorbing barriers</strong> at <span class="math inline">\(d=(a^i_1-a^i_2)/r\)</span> → lock-in</li>
+</ul>
+</section>
+<section id="heterogeneous-adopters-the-three-regimes" class="slide level2">
+<h2>Heterogeneous adopters: the three regimes</h2>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><img data-src="images/het_agents_random_walk.png"></p>
+<p><span class="math inline">\(r=0\)</span>: random walk</p>
+</div><div class="column" style="width:33%;">
+<p><img data-src="images/het_agents_reflecing_barriers.png"></p>
+<p><span class="math inline">\(r&lt;0\)</span>: reflecting</p>
+</div><div class="column" style="width:33%;">
+<p><img data-src="images/het_adopters_absorbing_barriers.png"></p>
+<p><span class="math inline">\(r&gt;0\)</span>: absorbing (lock-in)</p>
+</div></div>
+</section>
+<section id="properties-of-the-three-regimes" class="slide level2">
+<h2>Properties of the three regimes</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">Predictable</th>
+<th style="text-align: center;">Flexible</th>
+<th style="text-align: center;">Ergodic</th>
+<th style="text-align: center;">Efficient</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Constant returns</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr class="even">
+<td>Decreasing returns</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+<td style="text-align: center;">Yes</td>
+</tr>
+<tr class="odd">
+<td>Increasing returns</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+<td style="text-align: center;">No</td>
+</tr>
+</tbody>
+</table>
+<p><strong>With increasing returns, history matters:</strong> early random events can select the winner — possibly an inferior technology (lock-in).</p>
+</section>
+<section id="interactive-competing-technologies" class="slide level2" data-background-color="#f5f7fa">
+<h2>Interactive: competing technologies</h2>
+<div style="font-size:0.62em">
+<p>Set <span class="math inline">\(a^j_i\)</span>, the return <span class="math inline">\(r\)</span>, the seed and horizon → watch <span class="math inline">\(d(t)\)</span> and the barriers. <strong>Arthur</strong> tab: under <span class="math inline">\(r&gt;0\)</span>, change only the seed and the <strong>winner changes</strong> (non-ergodicity); <span class="math inline">\(r&lt;0\)</span> gives stable coexistence.</p>
+</div>
+<iframe class="appframe" data-src="https://acuz.shinyapps.io/tech-diffusion-models/">
+</iframe>
+</section>
+<section id="connecting-the-models-to-nelsons-framework" class="slide level2">
+<h2>Connecting the models to Nelson’s framework</h2>
+<ul>
+<li><strong>Mansfield’s logistic model</strong> ≈ Model I (rational choice): clear feedback, single technology, focus on the <em>rate</em> of adoption.</li>
+<li><strong>Arthur’s competing-technologies model</strong> ≈ Model II (quasi-rational, lock-in): increasing returns, focus on <em>which</em> technology wins.</li>
+</ul>
+<p>Different mechanisms (profitability vs network effects vs social construction) → fundamentally different diffusion patterns.</p>
+</section></section>
+<section>
+<section id="modern-empirics-three-studies" class="title-slide slide level1 center">
+<h1>Modern empirics: three studies</h1>
+
+</section>
+<section id="from-historical-cases-to-modern-digital-gpts" class="slide level2 smaller">
+<h2>From historical cases to modern digital GPTs</h2>
+<p>Nelson et al.&nbsp;(2004) studied <strong>20th-century</strong> innovations. What about 21st-century <strong>general-purpose digital technologies</strong> — AI, machine learning, big data, IoT, blockchain?</p>
+<p>How they differ from the historical cases:</p>
+<ul>
+<li><strong>Intangibility</strong> — digital and embedded in services; harder to observe and measure than a machine or a vaccine</li>
+<li><strong>Speed</strong> — potentially much faster diffusion, but also faster <strong>lock-in</strong></li>
+<li><strong>Network effects</strong> — value rises steeply with adoption (stronger than past GPTs)</li>
+<li><strong>Global</strong> — knowledge is far more mobile across borders</li>
+<li><strong>Uncertainty</strong> — productivity benefits are unclear and hard to measure (the “productivity paradox”)</li>
+</ul>
+<p><strong>Research challenge:</strong> with no clean adoption register, how do we <em>measure</em> who actually uses an emerging technology, and identify <em>how</em> it spreads?</p>
+</section>
+<section id="measuring-modern-diffusion-the-data-challenge" class="slide level2 smaller">
+<h2>Measuring modern diffusion: the data challenge</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Indicator</th>
+<th>Strengths</th>
+<th>Limitations</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Patents</td>
+<td>Objective, detailed</td>
+<td>Lag actual use; miss adoption</td>
+</tr>
+<tr class="even">
+<td>R&amp;D spending</td>
+<td>Input measure</td>
+<td>Not available at fine granularity</td>
+</tr>
+<tr class="odd">
+<td>Surveys</td>
+<td>Direct questions</td>
+<td>Small samples; response bias</td>
+</tr>
+</tbody>
+</table>
+<p>New approaches: <strong>web scraping</strong>, <strong>NLP/LLMs</strong>, <strong>network data</strong>, <strong>digital traces</strong> — real-time, comprehensive, but with measurement error and selection.</p>
+</section>
+<section id="dahlke-et-al.-2024-ai-diffusion-in-firm-networks" class="slide level2 smaller">
+<h2>Dahlke et al.&nbsp;(2024) — AI diffusion in firm networks</h2>
+<p><strong>Sample:</strong> 1.1M firms in Germany, Austria, Switzerland (2022). <strong>Method:</strong> web scraping + transformer LM → <em>deep</em> vs <em>superficial</em> AI knowledge (categories overlap).</p>
+<ul>
+<li>Overall AI adoption <strong>2.2%</strong> (1.5% deep, 1.3% superficial)</li>
+<li>Highly <strong>geographically</strong> (Munich, Hamburg, research hubs) and <strong>sectorally</strong> concentrated (ICT &gt;11%, consulting &gt;5%)</li>
+<li>AI adopters form <strong>closed, interconnected clusters</strong>, peripheral to the broader network (~4% of firms linked to an AI-positive firm)</li>
+</ul>
+</section>
+<section id="geographic-concentration-dahlke" class="slide level2 smaller">
+<h2>Geographic concentration (Dahlke)</h2>
+
+<img data-src="images/fig_3_ai_paper.png" class="quarto-figure quarto-figure-center r-stretch" style="width:62.0%"><p>Hot-spots around major cities and German AI research centres; many regions near zero; hot-spots show a higher share of deep vs superficial knowledge.</p>
+</section>
+<section id="network-structure-dahlke" class="slide level2 smaller">
+<h2>Network structure (Dahlke)</h2>
+
+<img data-src="images/fig_4_ai_paper.png" class="quarto-figure quarto-figure-center r-stretch" style="width:66.0%"><p>AI adopters are highly interconnected among themselves but peripheral to the overall firm network — a closed system that hinders broader diffusion.</p>
+</section>
+<section id="three-epidemic-mechanisms-dahlke" class="slide level2 smaller">
+<h2>Three epidemic mechanisms (Dahlke)</h2>
+<p>Three channels through which AI adoption spreads (average marginal effects on having <strong>deep</strong> AI knowledge):</p>
+<ol type="1">
+<li><strong>Mimetic pressure</strong> (indirect exposure) — being surrounded by adopters: regional adoption rate AME <strong>0.192***</strong>, sectoral rate <strong>0.200***</strong> → strong pull inside hot-spots.</li>
+<li><strong>Direct transmission</strong> (firm-to-firm links) — <strong>reciprocal</strong> deep-AI hyperlinks AME <strong>0.201***</strong>; <em>superficial</em>-knowledge links are weak; moderated by <strong>cognitive</strong> (not geographic) proximity.</li>
+<li><strong>Network embeddedness</strong> (structural position) — <strong>degree</strong> centrality in the AI network AME <strong>0.259***</strong> (largest effect); <strong>closeness</strong> in the <em>overall</em> firm network ≈ 0 / negative; <strong>betweenness</strong> small.</li>
+</ol>
+<p><strong>Reading:</strong> AI knowledge circulates inside a <strong>closed club</strong> of well-connected adopters that sits <strong>peripheral</strong> to the broader firm network → the classic epidemic (susceptible firms catch it from neighbours) <strong>breaks down</strong>.</p>
+</section>
+<section id="ayerst-et-al.-2023-embodied-technology-in-trade" class="slide level2 smaller">
+<h2>Ayerst et al.&nbsp;(2023) — embodied technology in trade</h2>
+<p><strong>Core idea:</strong> importing a product can mean importing the <strong>knowledge embedded</strong> in it — an imported MRI machine carries image-processing algorithms, materials science and software design that local firms can learn from, reverse-engineer and build on.</p>
+<p>Two distinct kinds of sectoral linkage:</p>
+<ul>
+<li><strong>Production linkages</strong> — which sectors supply <em>physical inputs</em> to yours (from <strong>input-output tables</strong>). E.g. autos buy from steel.</li>
+<li><strong>Knowledge linkages</strong> — which sectors supply <em>knowledge inputs</em> for your innovation (from <strong>patent citations</strong> across sectors). E.g. pharma cites biotech and software.</li>
+</ul>
+<p><strong>Key finding:</strong> the two are <strong>empirically distinct</strong> — a sector buys goods from one set of sectors but cites patents from a different set. So <strong>knowledge does not flow along the same paths as goods</strong>.</p>
+</section>
+<section id="knowledge-vs-production-linkages-ayerst" class="slide level2 smaller">
+<h2>Knowledge vs production linkages (Ayerst)</h2>
+
+<img data-src="images/IO_tables.png" class="quarto-figure quarto-figure-center r-stretch" style="width:64.0%"><p>Different inter-sectoral patterns; knowledge linkages less concentrated; more persistent for the US (less so in other countries).</p>
+</section>
+<section id="constructing-embodied-technology-measures" class="slide level2 smaller">
+<h2>Constructing embodied-technology measures</h2>
+<p><span class="math display">\[ \text{EmbTechK}^h_{i,t}=\prod_{l\neq h}\Big(1+\textstyle\sum_{p\in P_l}w^l_{(p)}K^p_{\text{US},t}M^p_{\text{US},i,t}\Big)^{\kappa^{l,h}_{\text{US},t}} \]</span> <span class="math display">\[ \text{EmbTechP}^h_{i,t}=\prod_{l\neq h}\Big(1+\textstyle\sum_{p\in P_l}w^l_{(p)}K^p_{\text{US},t}M^p_{\text{US},i,t}\Big)^{\rho^{l,h}_{\text{US},t}} \]</span></p>
+<p><span class="math inline">\(K\)</span>: US subsector knowledge stock; <span class="math inline">\(M\)</span>: imports from the US; <span class="math inline">\(\kappa\)</span>: knowledge IO weights; <span class="math inline">\(\rho\)</span>: production IO weights. Own sector <span class="math inline">\(l\neq h\)</span> excluded.</p>
+</section>
+<section id="do-imports-drive-innovation" class="slide level2 smaller">
+<h2>Do imports drive innovation?</h2>
+<p>82 countries, 292 sectors, 1995–2015; IV = US exports to <strong>dissimilar</strong> countries (outside the importer’s similarity cluster).</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Outcome</th>
+<th style="text-align: center;">Knowledge-weighted</th>
+<th style="text-align: center;">Production-weighted</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Elasticity (patents)</td>
+<td style="text-align: center;">0.666***</td>
+<td style="text-align: center;">0.003**</td>
+</tr>
+<tr class="even">
+<td>Elasticity (fwd. cites)</td>
+<td style="text-align: center;">0.545***</td>
+<td style="text-align: center;">0.002*</td>
+</tr>
+<tr class="odd">
+<td>US backward citations</td>
+<td style="text-align: center;">1.023***</td>
+<td style="text-align: center;">0.005*</td>
+</tr>
+</tbody>
+</table>
+<p>A 1% rise in knowledge-weighted imports → ≈0.67% more patenting; knowledge linkages are <strong>orders of magnitude</strong> more effective than production linkages.</p>
+</section>
+<section id="sun-trefler-2023-ai-data-regulation-trade" class="slide level2 smaller">
+<h2>Sun &amp; Trefler (2023) — AI, data regulation &amp; trade</h2>
+<p><strong>Setting:</strong> mobile apps — a fast-growing, AI-intensive, heavily-traded digital service. 35,575 apps (2015–2020), users by country.</p>
+<p><strong>Measurement:</strong> link app descriptions to developers’ AI patents with <strong>Google’s BERT</strong> (cosine similarity) — billions of app–patent pairs.</p>
+<p><strong>Identification:</strong> a Heckscher-Ohlin cost-shifter instrument (industry AI-intensity × country AI-abundance × pre-2008 AI patents), <span class="math inline">\(F\approx 1{,}384\)</span>.</p>
+</section>
+<section id="sun-trefler-key-results" class="slide level2 smaller">
+<h2>Sun &amp; Trefler — key results</h2>
+<ul>
+<li><strong>AI raises foreign users by 2.67 log points</strong> (a &gt;10-fold increase); robust, with placebos centred on zero.</li>
+<li><strong>Cross-border data restrictions roughly halve the effect</strong> (2.58 → 2.02 log points).</li>
+<li><strong>Autocracies impose the tightest rules and suffer most</strong> — e.g.&nbsp;China ≈ 0.68 log pts (≈50% fewer foreign users) vs ≈ 0 for the US/Canada.</li>
+<li><strong>AI externality:</strong> firms with no patents of their own still gain from others’ AI corpus (≈0.3 log points) — spillovers reach almost all exporters.</li>
+</ul>
+<div style="font-size:0.75em">
+<div class="callout callout-note no-icon callout-style-simple">
+<div class="callout-body">
+<div class="callout-content">
+<p>The “click-throughs −75% / views −33% / purchases −81%” figures are a <em>separate</em> cited field experiment (Alibaba), not Sun &amp; Trefler’s own autocracy estimate.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="synthesis-domestic-and-international-channels" class="slide level2 smaller">
+<h2>Synthesis: domestic and international channels</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mechanism</th>
+<th>Across firms (Dahlke)</th>
+<th>Across countries (Ayerst)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Indirect</td>
+<td>Regional/sectoral mimetic pressure</td>
+<td>Trade exposure to frontier knowledge</td>
+</tr>
+<tr class="even">
+<td>Direct</td>
+<td>Firm hyperlinks, reciprocal links</td>
+<td>Knowledge-weighted imports</td>
+</tr>
+<tr class="odd">
+<td>Network position</td>
+<td>Embeddedness in AI network</td>
+<td>Position in global value chains</td>
+</tr>
+<tr class="even">
+<td>Moderators</td>
+<td>Cognitive proximity</td>
+<td>Knowledge vs production linkages</td>
+</tr>
+</tbody>
+</table>
+<p>Plus <strong>regulation</strong> (Sun &amp; Trefler): cross-border data rules shape where AI services can diffuse.</p>
+</section>
+<section id="channels-of-technology-diffusion" class="slide level2 smaller">
+<h2>Channels of technology diffusion</h2>
+<p><strong>Across firms (Dahlke):</strong> AI knowledge trapped in closed clusters; peripheral firms excluded even when geographically close; mimetic pressure strong in hot-spots; embeddedness crucial but creates closure.</p>
+<p><strong>Across countries (Ayerst):</strong> need absorptive capacity; knowledge linkages &gt; production linkages; importing the “wrong” products misses spillovers; own knowledge stock complements imported knowledge.</p>
+<p><strong>Regulation (Sun &amp; Trefler):</strong> cross-border data rules shape where AI-enabled services can diffuse.</p>
+</section>
+<section id="methodological-lessons" class="slide level2">
+<h2>Methodological lessons</h2>
+<ol type="1">
+<li><strong>Measurement innovation is crucial</strong> — web scraping, NLP/LLMs, network data complement patents, R&amp;D and surveys.</li>
+<li><strong>Multiple data sources increase confidence</strong> — triangulation addresses measurement error and selection.</li>
+<li><strong>Granularity vs coverage trade-off</strong> — firm-level (Dahlke, DACH) vs country-sector (Ayerst, 82 countries).</li>
+</ol>
+</section>
+<section id="references" class="slide level2 smaller">
+<h2>References</h2>
+<ul>
+<li>Mansfield, E. (1961), <em>Econometrica</em> 29(4), 741–66.</li>
+<li>Arthur, W.B. (1994), <em>Increasing Returns and Path Dependence in the Economy</em>, U. Michigan Press.</li>
+<li>Nelson, Peterhansl &amp; Sampat (2004), <em>Industrial and Corporate Change</em> 13(5), 679–99.</li>
+<li>Dosi, G. (2023), <em>The Foundations of Complex Evolving Economies</em>, OUP.</li>
+<li>Dahlke et al.&nbsp;(2024), <em>Research Policy</em>.</li>
+<li>Ayerst et al.&nbsp;(2023), <em>Journal of Monetary Economics</em>.</li>
+<li>Sun, R. &amp; Trefler, D. (2023), NBER WP 31925.</li>
+<li>Goldfarb, A. &amp; Trefler, D. (2019), “Artificial intelligence and international trade”, NBER WP 24254.</li>
+</ul>
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<div class="footer footer-default">
+<p>Technological Diffusion</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="tech_diffusion_notes_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'fade',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1280,
+
+        height: 720,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 6.0e-2,
+
+        math: {
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+</body></html>
