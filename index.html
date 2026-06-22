@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="tech_diffusion_files/libs/revealjs/dist/theme/quarto-73abf1ea2bcdd143c86f5f9f1f2c8b74.css">
+  <link rel="stylesheet" href="tech_diffusion_files/libs/revealjs/dist/theme/quarto-8d7de7ab73a0586eb3d22579354e7c68.css">
   <link href="tech_diffusion_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="tech_diffusion_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="tech_diffusion_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -204,26 +204,25 @@ Angelo Cuzzola
 
   <p class="date">Invalid Date</p>
 </section>
-<section id="roadmap" class="slide level2 smaller">
+<section id="roadmap" class="slide level2">
 <h2>Roadmap</h2>
 <p><strong>Part I — Concepts and qualitative models</strong></p>
 <ul>
-<li>What diffusion is, the S-curve, path dependence and increasing returns</li>
-<li>Nelson et al.&nbsp;(2004): a framework of four models of adoption</li>
-<li>An interactive classification game + historical case studies</li>
+<li>What diffusion is, the <strong>S-curve</strong>, path dependence and increasing returns</li>
+<li><strong>Nelson et al.&nbsp;(2004)</strong>: a framework of four models of adoption</li>
+<li>An interactive <strong>classification game</strong> + historical case studies</li>
 </ul>
-<p><strong>Part II — Formal models and modern evidence</strong></p>
+<div style="color:#555">
+<p><em>Why do some technologies spread fast, others lock in, and others fade as fads?</em></p>
+</div>
+<p><strong>Part II — Formal models and recent evidence</strong></p>
 <ul>
-<li>Mansfield (1961): the logistic model of a single successful innovation</li>
-<li>Arthur (1989/1994): competing technologies, lock-in and path dependence</li>
-<li>Three modern studies: Dahlke et al.&nbsp;(2024), Ayerst et al.&nbsp;(2023), Sun &amp; Trefler (2023)</li>
+<li><strong>Mansfield (1961)</strong>: the logistic model of a single successful innovation</li>
+<li><strong>Arthur (1989/1994)</strong>: competing technologies, lock-in and path dependence</li>
+<li>Three <strong>recent studies</strong>: Dahlke et al.&nbsp;(2024), Ayerst et al.&nbsp;(2023), Sun &amp; Trefler (2023)</li>
 </ul>
-<div class="callout callout-note no-icon callout-style-simple">
-<div class="callout-body">
-<div class="callout-content">
-<p>Interactive: a <strong>live polling game</strong> (Part I, on your phone) and a <strong>Shiny app</strong> for the two models (Part II).</p>
-</div>
-</div>
+<div style="color:#555">
+<p><em>From hand-drawn dynamics to AI diffusion measured with web-scraping and LLMs — plus a <strong>live poll</strong> (Part I) and a <strong>Shiny app</strong> (Part II).</em></p>
 </div>
 </section>
 <section>
@@ -266,10 +265,20 @@ Angelo Cuzzola
 </section>
 <section id="the-typical-diffusion-pattern-the-s-curve" class="slide level2">
 <h2>The typical diffusion pattern: the S-curve</h2>
-<svg class="diagram" viewbox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="max-height:380px">
+<div class="columns">
+<div class="column" style="width:62%;">
+<svg class="diagram" viewbox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" style="max-height:330px">
 <defs><marker id="arr" markerwidth="10" markerheight="10" refx="6" refy="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="#222"></path></marker></defs> <line x1="60" y1="285" x2="655" y2="285" stroke="#222" stroke-width="2" marker-end="url(#arr)"></line> <line x1="60" y1="285" x2="60" y2="25" stroke="#222" stroke-width="2" marker-end="url(#arr)"></line> <text x="650" y="308" text-anchor="end" font-size="17">Time</text> <text x="68" y="22" font-size="17">Adoption (%)</text> <path d="M72,278 C 190,274 210,250 255,205 C 320,140 380,70 470,62 C 560,55 620,52 648,50" fill="none" stroke="#005AA0" stroke-width="3"></path> <g stroke="#bbb" stroke-dasharray="4"> <line x1="175" y1="285" x2="175" y2="240"></line> <line x1="290" y1="285" x2="290" y2="170"></line> <line x1="405" y1="285" x2="405" y2="90"></line> <line x1="520" y1="285" x2="520" y2="60"></line> </g> <g font-size="12" fill="#555" text-anchor="middle"> <text x="118" y="300">Innovators</text> <text x="232" y="300">Early adopters</text> <text x="347" y="300">Early majority</text> <text x="462" y="300">Late majority</text> <text x="585" y="300">Laggards</text> </g>
 </svg>
-<p>Slow initial adoption → rapid growth → saturation.</p>
+</div><div class="column" style="width:38%;">
+<p>Successful innovations trace an <strong>S-shape</strong>:</p>
+<ul>
+<li><strong>Slow start</strong> — innovators experiment under uncertainty</li>
+<li><strong>Rapid growth</strong> — mainstream adoption as information spreads and uncertainty falls</li>
+<li><strong>Saturation</strong> — most potential adopters have adopted; the curve flattens</li>
+</ul>
+</div></div>
+<p>The whole course asks: <strong>what generates this curve</strong>, and <strong>why do some technologies never complete it</strong>?</p>
 </section>
 <section id="evolutionary-perspective-path-dependence" class="slide level2">
 <h2>Evolutionary perspective: path dependence</h2>
@@ -599,25 +608,30 @@ Angelo Cuzzola
 <p>“Once an innovation is introduced by one firm, how soon do others in the industry come to use it? What factors determine how rapidly they follow?” — Mansfield (1961)</p>
 </blockquote>
 <ul>
-<li>Data on 12 innovations in four industrial sectors</li>
-<li>A deterministic model of progressive adoption</li>
+<li><strong>The question:</strong> not <em>whether</em> a profitable innovation spreads, but <em>how fast</em> — and what sets the speed</li>
+<li>Evidence: <strong>12 innovations</strong> across <strong>four sectors</strong> (iron &amp; steel, railroads, brewing, bituminous coal)</li>
+<li>A <strong>deterministic</strong> model of progressive adoption that generates the logistic (S-)curve</li>
+<li>Two forces: a <strong>natural rate</strong> (profitability, cost) + an <strong>imitation effect</strong> (more adopters → faster adoption)</li>
 </ul>
 </section>
 <section id="what-the-data-show-13" class="slide level2 smaller">
 <h2>What the data show (1/3)</h2>
 <p>Innovations: by-product coke oven, diesel locomotive, tin container, shuttle car (iron &amp; steel, railroads, brewing, coal).</p>
 
-<img data-src="images/Mansfield_example_1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:74.0%"></section>
+<img data-src="images/Mansfield_example_1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> different innovations diffuse at <strong>different speeds</strong>; more <strong>profitable</strong> ones diffuse faster; all trace the same <strong>S-shape</strong>.</p>
+</section>
 <section id="what-the-data-show-23" class="slide level2 smaller">
 <h2>What the data show (2/3)</h2>
 <p>Innovations: car retarder, trackless mobile loader, continuous mining machine, pallet-loading machine.</p>
 
-<img data-src="images/Mansfield_example_2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:74.0%"></section>
+<img data-src="images/Mansfield_example_2.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> the same S-shape recurs across very different industries — diffusion is a <strong>general pattern</strong>, not a quirk of one sector.</p>
+</section>
 <section id="what-the-data-show-33" class="slide level2 smaller">
 <h2>What the data show (3/3)</h2>
 <p>Innovations: continuous wide-strip mill, centralized traffic control, continuous annealing, high-speed bottle filler.</p>
 
-<img data-src="images/Mansfield_example_3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:74.0%"></section>
+<img data-src="images/Mansfield_example_3.png" class="quarto-figure quarto-figure-center r-stretch" style="width:70.0%"><p><strong>Observations:</strong> slopes vary, but the curves are <strong>monotone and saturating</strong> — the regularity Mansfield’s model is built to reproduce.</p>
+</section>
 <section id="the-logistic-model-the-core-idea" class="slide level2">
 <h2>The logistic model: the core idea</h2>
 <p>The rate of adoption depends on two factors:</p>
